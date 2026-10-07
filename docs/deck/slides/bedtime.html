@@ -1,0 +1,13 @@
+<section id="bedtime" data-section="Bedtime check" style="background:#f5f7f9;color:#14202b;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<h2 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1">Tonight's low, predicted at bedtime</h2>
+<div style="display:grid;grid-template-columns:1080px 1fr;gap:48px;align-items:center">
+<img src="../../figures/bedtime.png" alt="ROC curves for the bedtime check, LightGBM night classifier and bedtime-glucose rule, and a histogram of when night lows start" style="width:1080px;height:430px;object-fit:contain;background:#ffffff">
+<div style="display:flex;flex-direction:column;gap:22px">
+<p style="font-size:30px;line-height:1.4">AUROC <b>0.86</b> vs 0.80 for LightGBM (+0.06, 95% CI 0.01–0.11) and 0.53 for the bedtime-glucose rule.</p>
+<p style="font-size:30px;line-height:1.4">Flags <b>84%</b> of night lows, a median <b>2.5 h</b> before they start, before the person falls asleep.</p>
+<p style="font-size:30px;line-height:1.4">A twin-sized snack cut night-time below 70 by <b>27%</b> (1.63% → 1.19%, p = 0.03), for 2.5 snacks a week.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5a6b79">529 held-out nights, 177 with a low (&lt; 70 mg/dL ≥ 15 min, 23:00–07:00). Thresholds frozen on the development cohort. It also flags 27% of nights that stay safe.</p>
+<aside>At 23:00 the twin runs the night twice: as fitted, and with insulin 25% stronger. If the worse path dips below the alert line, it sizes the smallest snack that keeps the night above 80. We hoped for 4–7 hours of warning; we measured 2.5 hours median, because most lows start early in the night.</aside>
+</section>

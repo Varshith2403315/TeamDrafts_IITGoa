@@ -1,17 +1,22 @@
 <section id="solution" data-section="The solution" data-transition="fade" style="background:#14202b;color:#f5f7f9;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:56px">
-<h2 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#f5f7f9">DoseTwin does two jobs</h2>
+<h2 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#f5f7f9">DoseTwin does three jobs</h2>
 <div style="display:flex;gap:40px">
 <div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#1c2b38;border-radius:16px;padding:48px">
 <p style="font-size:28px;letter-spacing:2px;text-transform:uppercase;color:#ff8a8a;font-weight:600">Adverse event</p>
-<h3 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:56px;font-weight:700;line-height:1.1;color:#f5f7f9">Predicts lows before they start</h3>
-<p style="font-size:32px;line-height:1.4;color:#b9c6d2">Warns about hypoglycaemia while there is still time to eat 15 g of carbs, including during sleep.</p>
+<h3 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:56px;font-weight:700;line-height:1.1;color:#f5f7f9">Checks the night at bedtime</h3>
+<p style="font-size:32px;line-height:1.4;color:#b9c6d2">At 23:00 the twin simulates the night. If a low is likely, it sizes a bedtime snack before the person falls asleep.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#1c2b38;border-radius:16px;padding:48px">
+<p style="font-size:28px;letter-spacing:2px;text-transform:uppercase;color:#ff8a8a;font-weight:600">Adverse event</p>
+<h3 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:56px;font-weight:700;line-height:1.1;color:#f5f7f9">Warns before daytime lows</h3>
+<p style="font-size:32px;line-height:1.4;color:#b9c6d2">Twin forecast plus CGM trend, about 26 min ahead, while there is time to eat 15 g.</p>
 </div>
 <div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#1c2b38;border-radius:16px;padding:48px">
 <p style="font-size:28px;letter-spacing:2px;text-transform:uppercase;color:#8fb0ff;font-weight:600">Personal treatment</p>
-<h3 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:56px;font-weight:700;line-height:1.1;color:#f5f7f9">Tests every dose before injection</h3>
-<p style="font-size:32px;line-height:1.4;color:#b9c6d2">Simulates the next 5 hours for each half-unit dose and recommends the lowest-risk dose that stays above a safety floor.</p>
+<h3 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:56px;font-weight:700;line-height:1.1;color:#f5f7f9">Tests every meal dose</h3>
+<p style="font-size:32px;line-height:1.4;color:#b9c6d2">Simulates 5 hours for each half-unit dose and picks the lowest-risk dose above a safety floor.</p>
 </div>
 </div>
-<p style="font-size:32px;color:#b9c6d2">Inputs: CGM every 5 min · smart-pen doses · meal log · phone steps · synthetic EHR (diagnoses, labs, genetics, prescriptions).</p>
+<p style="font-size:32px;color:#b9c6d2">Inputs: CGM · smart-pen doses · meal log · steps, heart rate and sleep · synthetic EHR (diagnoses, labs incl. HbA1c and eGFR, genetics, prescriptions).</p>
 <aside>This maps directly onto the brief: integrate wearable streams with the EHR, predict adverse events, and personalise the treatment protocol. DoseTwin is software, so it works with the affordable sensors families already use.</aside>
 </section>

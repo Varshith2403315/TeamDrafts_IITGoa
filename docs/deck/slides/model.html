@@ -1,13 +1,14 @@
 <section id="model" style="background:#f5f7f9;color:#14202b;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
 <h2 style="font-family:'Bricolage Grotesque', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1">AI and model details</h2>
-<table style="font-size:28px;color:#14202b;font-family:'IBM Plex Sans', Arial, sans-serif">
+<table style="font-size:26px;color:#14202b;font-family:'IBM Plex Sans', Arial, sans-serif">
 <tr><th style="width:24%;text-align:left">Component</th><th style="width:76%;text-align:left">What it is</th></tr>
-<tr><td style="text-align:left">Twin model</td><td style="text-align:left">10-state extended Bergman model: SC insulin, carb absorption, activity from steps, dawn effect</td></tr>
-<tr><td style="text-align:left">Personalisation</td><td style="text-align:left">EHR prior (weight, insulin prescriptions, HbA1c), then MAP fit on 5–300 min forecast error</td></tr>
+<tr><td style="text-align:left">Twin model</td><td style="text-align:left">10-state extended Bergman model: SC insulin, carb absorption, activity from steps + heart rate, sleep-debt insulin resistance, dawn effect</td></tr>
+<tr><td style="text-align:left">Personalisation</td><td style="text-align:left">EHR prior (weight, prescriptions, HbA1c, eGFR), then MAP fit on 5–300 min forecast error</td></tr>
 <tr><td style="text-align:left">Synchronisation</td><td style="text-align:left">Fixed-gain observer on CGM; unexplained-rate state captures surprises</td></tr>
-<tr><td style="text-align:left">Dose advisor</td><td style="text-align:left">Kovatchev risk minimisation; rejects doses whose pessimistic path dips below 70</td></tr>
+<tr><td style="text-align:left">Dose advisor</td><td style="text-align:left">Kovatchev risk minimisation; rejects doses whose pessimistic path dips below 70 (80 with severe-hypo history)</td></tr>
+<tr><td style="text-align:left">Bedtime check</td><td style="text-align:left">8-h nominal and pessimistic night forecast at 23:00; flags below 84 mg/dL; snack sized on the twin</td></tr>
 <tr><td style="text-align:left">Low alert</td><td style="text-align:left">Hybrid score: twin forecast minimum + 30-min CGM trend; alerts below 65</td></tr>
-<tr><td style="text-align:left">Baseline</td><td style="text-align:left">LightGBM forecaster and classifier trained on 30 other patients</td></tr>
+<tr><td style="text-align:left">Baseline</td><td style="text-align:left">LightGBM forecaster, low classifier and night classifier, same inputs, trained on 30 other patients</td></tr>
 </table>
 <p style="font-size:28px;color:#4a5a68;width:1500px;line-height:1.4">The twin is interpretable: every parameter has a physiological meaning a clinician can review, and it can answer <b>what if</b> questions that a pure ML forecaster cannot.</p>
 <aside>Why mechanistic plus learning: a black-box forecaster predicts glucose but cannot simulate a dose it has never seen. The twin can, and its parameters map to clinical settings.</aside>
