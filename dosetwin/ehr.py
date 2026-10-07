@@ -8,10 +8,17 @@ What the twin uses from the record:
   * weight, prescribed carb ratio (CR), correction factor (CF), basal dose
     -> the EHR-informed prior (identify.ehr_prior);
   * HbA1c -> prior on fasting glucose via the ADAG relation
-    (estimated average glucose = 28.7 x HbA1c - 46.7; Nathan et al. 2008).
-Everything else (diagnoses, other labs, genetics) is shown to the clinician in
-the dashboard; the hidden simulator does not model those effects, so they are
-not used by the algorithm and not claimed as evaluated.
+    (estimated average glucose = 28.7 x HbA1c - 46.7; Nathan et al. 2008);
+  * eGFR -> prior on insulin potency (reduced kidney function slows insulin
+    clearance; coefficient estimated on the development cohort);
+  * "history of severe hypoglycaemia" (ICD-10 E16.0) -> a higher safety floor
+    for dose advice and an earlier low alert, and a bedtime-risk feature.
+In the hidden simulator eGFR and impaired hypoglycaemia awareness have real
+physiological effects, and the record reflects them imperfectly (lab noise;
+the diagnosis is recorded for about 90% of patients with impaired awareness
+and 4% of others). Diagnoses other than E16.0, the remaining labs and genetics
+are shown to the clinician but have no modelled effect, so they are not used
+by the algorithm and not claimed as evaluated.
 """
 from __future__ import annotations
 
@@ -49,17 +56,20 @@ def build_records(world, log, seed: int, history_days: int = 7) -> list[dict]:
             conditions.append({"code": "E03.9", "display": "Hypothyroidism (autoimmune)"})
         if rng.rand() < 0.06:
             conditions.append({"code": "K90.0", "display": "Coeliac disease"})
-        if rng.rand() < 0.2:
+        beh = world.behaviours[i]
+        if rng.rand() < (0.9 if beh.impaired_awareness else 0.04):
             conditions.append({"code": "E16.0", "display": "History of severe hypoglycaemia (past 12 months)"})
+        if beh.egfr < 60:
+            conditions.append({"code": "E10.2", "display": "Type 1 diabetes with kidney complications (diabetic kidney disease)"})
         if age >= 18 and age - onset_age > 10 and rng.rand() < 0.25:
             conditions.append({"code": "E10.3", "display": "Background diabetic retinopathy"})
         labs = {
             "hba1c_pct": a1c,
             "fasting_c_peptide_nmol_l": round(float(rng.uniform(0.01, 0.15)), 2),
-            "egfr_ml_min": int(np.clip(rng.normal(105 if age < 40 else 92, 12), 60, 140)),
+            "egfr_ml_min": int(np.clip(beh.egfr + rng.normal(0, 4), 15, 150)),
             "tsh_miu_l": round(float(rng.lognormal(np.log(2.2), 0.35) * (1.8 if any(c["code"] == "E03.9" for c in conditions) else 1)), 1),
             "ldl_mg_dl": int(np.clip(rng.normal(95 if age < 18 else 110, 22), 50, 190)),
-            "urine_acr_mg_g": int(np.clip(rng.lognormal(np.log(12), 0.6), 2, 250)),
+            "urine_acr_mg_g": int(np.clip(rng.lognormal(np.log(12 if beh.egfr >= 60 else 60), 0.6), 2, 600)),
         }
         hla = rng.choice(["DR3/DR4", "DR3/DR3", "DR4/DR4", "DR3/X", "DR4/X", "X/X"], p=[.32, .14, .14, .16, .16, .08])
         genetics = {"hla_dr_genotype": str(hla),
@@ -92,4 +102,6 @@ def ehr_table(world, log, seed: int) -> pd.DataFrame:
     recs = build_records(world, log, seed)
     df = world.ehr()
     df["hba1c_pct"] = [r["labs"]["hba1c_pct"] for r in recs]
+    df["egfr_ml_min"] = [r["labs"]["egfr_ml_min"] for r in recs]
+    df["severe_hypo_history"] = [int(any(c["code"] == "E16.0" for c in r["conditions"])) for r in recs]
     return df

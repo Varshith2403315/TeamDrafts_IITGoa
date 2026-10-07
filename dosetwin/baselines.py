@@ -1,6 +1,8 @@
 """Data-driven baseline: LightGBM forecaster / hypo classifier.
 
-This is the approach most CGM-prediction projects take. It is trained on the
+This is the approach most CGM-prediction projects take. It gets the same
+inputs as the twin: CGM, pen, meal log, steps, heart rate, sleep debt and the
+EHR fields (prescriptions, weight, HbA1c, eGFR, hypo history). It is trained on the
 development cohort (seed 7, all 30 patients) and evaluated on held-out cohorts,
 so it gets *more* training data than any single patient's twin.
 """
@@ -32,6 +34,9 @@ def _cob(carb_row, t, absorb=180):
 def features(log: dict, ehr, i: int, times: np.ndarray) -> np.ndarray:
     e = ehr.iloc[i]
     cgm, bol, carbs, steps = log["cgm"][i], log["bolus"][i], log["carbs_logged"][i], log["steps"][i]
+    hr = log["hr"][i] if "hr" in log else np.zeros_like(steps)
+    sd = log["sleep_debt"][i] if "sleep_debt" in log else np.zeros_like(steps)
+    col = (lambda k: float(e[k]) if k in e.index else np.nan)
     rows = []
     for t in times:
         lagv = []
@@ -46,8 +51,9 @@ def features(log: dict, ehr, i: int, times: np.ndarray) -> np.ndarray:
             lagv, d,
             [_iob(bol, t), _cob(carbs, t), steps[max(0, t - 30):t].sum(), steps[max(0, t - 60):t].sum(),
              np.sin(2 * np.pi * mod / 1440), np.cos(2 * np.pi * mod / 1440),
+             hr[max(0, t - 30):t].mean() if t > 0 else np.nan, sd[t],
              e["carb_ratio_g_per_u"], e["correction_factor_mgdl_per_u"], e["weight_kg"], e["basal_u_per_day"],
-             e["hba1c_pct"] if "hba1c_pct" in e.index else np.nan],
+             col("hba1c_pct"), col("egfr_ml_min"), col("severe_hypo_history")],
         ]))
     return np.array(rows)
 

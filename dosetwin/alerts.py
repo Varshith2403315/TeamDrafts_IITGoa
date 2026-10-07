@@ -55,17 +55,24 @@ class HybridAlert:
     """DoseTwin alert: average of the twin's 40-min forecast minimum and the
     30-min CGM trend projection. The twin contributes physiology (insulin and
     carbs on board, activity); the trend contributes fast-drop sensitivity.
-    Threshold frozen on the development cohort at <=2 false alerts/day."""
+    Threshold frozen on the development cohort at <=2 false alerts/day.
+    Patients whose record carries "history of severe hypoglycaemia" are warned
+    earlier: their threshold is raised by `history_bump` mg/dL (fixed a priori)."""
 
     name = "dosetwin_hybrid"
 
-    def __init__(self, tracker: TwinTracker, threshold=65.0):
+    def __init__(self, tracker: TwinTracker, threshold=65.0, ehr=None, history_bump=7.0):
         self.twin = TwinAlert(tracker, horizon=40)
         self.trend = TrendAlert(horizon=30)
+        n = len(tracker.names)
+        hist = np.zeros(n)
+        if ehr is not None and "severe_hypo_history" in ehr.columns:
+            hist = ehr.set_index("patient").loc[tracker.names, "severe_hypo_history"].to_numpy(float)
+        self.thresholds = threshold + history_bump * hist
         self.threshold = threshold
 
     def score(self, i, t, log) -> float:
         return 0.5 * (self.twin.score(i, t, log) + self.trend.score(i, t, log))
 
     def __call__(self, i, t, log, cgm_now):
-        return self.score(i, t, log) < self.threshold
+        return self.score(i, t, log) < self.thresholds[i]
