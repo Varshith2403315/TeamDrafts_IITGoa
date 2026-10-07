@@ -1,0 +1,542 @@
+{
+  "design": {
+    "patients": 30,
+    "test_seeds": [
+      2026,
+      2027,
+      2028
+    ],
+    "dev_seed": 7,
+    "days_runin": 7,
+    "days_eval": 7
+  },
+  "fit_seconds_median": 1.2868545055389404,
+  "forecast_rmse": [
+    {
+      "method": "cgm_trend",
+      "horizon": 30,
+      "rmse": 31.53,
+      "rmse_low": 26.58
+    },
+    {
+      "method": "cgm_trend",
+      "horizon": 60,
+      "rmse": 64.43,
+      "rmse_low": 49.48
+    },
+    {
+      "method": "cgm_trend",
+      "horizon": 120,
+      "rmse": 132.7,
+      "rmse_low": 119.59
+    },
+    {
+      "method": "lightgbm",
+      "horizon": 30,
+      "rmse": 16.03,
+      "rmse_low": 13.99
+    },
+    {
+      "method": "lightgbm",
+      "horizon": 60,
+      "rmse": 25.56,
+      "rmse_low": 23.26
+    },
+    {
+      "method": "lightgbm",
+      "horizon": 120,
+      "rmse": 35.98,
+      "rmse_low": 38.94
+    },
+    {
+      "method": "persistence",
+      "horizon": 30,
+      "rmse": 26.53,
+      "rmse_low": 18.84
+    },
+    {
+      "method": "persistence",
+      "horizon": 60,
+      "rmse": 42.67,
+      "rmse_low": 34.59
+    },
+    {
+      "method": "persistence",
+      "horizon": 120,
+      "rmse": 61.24,
+      "rmse_low": 68.45
+    },
+    {
+      "method": "personal_twin",
+      "horizon": 30,
+      "rmse": 17.7,
+      "rmse_low": 14.87
+    },
+    {
+      "method": "personal_twin",
+      "horizon": 60,
+      "rmse": 26.99,
+      "rmse_low": 19.88
+    },
+    {
+      "method": "personal_twin",
+      "horizon": 120,
+      "rmse": 45.8,
+      "rmse_low": 31.47
+    },
+    {
+      "method": "population_twin",
+      "horizon": 30,
+      "rmse": 71.91,
+      "rmse_low": 32.47
+    },
+    {
+      "method": "population_twin",
+      "horizon": 60,
+      "rmse": 96.6,
+      "rmse_low": 43.68
+    },
+    {
+      "method": "population_twin",
+      "horizon": 120,
+      "rmse": 92.87,
+      "rmse_low": 68.58
+    }
+  ],
+  "glycemic_by_arm": [
+    {
+      "arm": "A_standard",
+      "tir_70_180": 75.994,
+      "tbr_lt70": 3.648,
+      "tbr_lt54": 0.553,
+      "tar_gt180": 20.358,
+      "tar_gt250": 4.548,
+      "night_tbr_lt70": 7.542,
+      "night_tbr_lt54": 1.551,
+      "lbgi": 1.015,
+      "hbgi": 4.732,
+      "mean": 142.635,
+      "cv": 32.912,
+      "alerts_per_day": 0.0,
+      "rescue_carbs_per_day": 32.214,
+      "bolus_u_per_day": 23.406
+    },
+    {
+      "arm": "B_standard+trend_alert",
+      "tir_70_180": 78.4,
+      "tbr_lt70": 1.162,
+      "tbr_lt54": 0.054,
+      "tar_gt180": 20.438,
+      "tar_gt250": 4.672,
+      "night_tbr_lt70": 2.071,
+      "night_tbr_lt54": 0.146,
+      "lbgi": 0.556,
+      "hbgi": 4.809,
+      "mean": 145.49,
+      "cv": 30.8,
+      "alerts_per_day": 2.652,
+      "rescue_carbs_per_day": 41.429,
+      "bolus_u_per_day": 23.606
+    },
+    {
+      "arm": "C_twin_dose+trend_alert",
+      "tir_70_180": 79.799,
+      "tbr_lt70": 1.378,
+      "tbr_lt54": 0.111,
+      "tar_gt180": 18.824,
+      "tar_gt250": 4.307,
+      "night_tbr_lt70": 2.752,
+      "night_tbr_lt54": 0.325,
+      "lbgi": 0.584,
+      "hbgi": 4.459,
+      "mean": 143.054,
+      "cv": 31.915,
+      "alerts_per_day": 2.711,
+      "rescue_carbs_per_day": 43.833,
+      "bolus_u_per_day": 27.767
+    },
+    {
+      "arm": "D_dosetwin",
+      "tir_70_180": 80.582,
+      "tbr_lt70": 1.126,
+      "tbr_lt54": 0.086,
+      "tar_gt180": 18.293,
+      "tar_gt250": 4.23,
+      "night_tbr_lt70": 2.12,
+      "night_tbr_lt54": 0.235,
+      "lbgi": 0.573,
+      "hbgi": 4.359,
+      "mean": 142.061,
+      "cv": 32.009,
+      "alerts_per_day": 2.637,
+      "rescue_carbs_per_day": 41.167,
+      "bolus_u_per_day": 27.743
+    },
+    {
+      "arm": "E_dosetwin_population_prior",
+      "tir_70_180": 82.886,
+      "tbr_lt70": 1.278,
+      "tbr_lt54": 0.084,
+      "tar_gt180": 15.836,
+      "tar_gt250": 3.343,
+      "night_tbr_lt70": 1.887,
+      "night_tbr_lt54": 0.178,
+      "lbgi": 0.674,
+      "hbgi": 3.797,
+      "mean": 137.205,
+      "cv": 31.731,
+      "alerts_per_day": 4.217,
+      "rescue_carbs_per_day": 61.452,
+      "bolus_u_per_day": 28.808
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "comparison": "D_dosetwin vs B_standard+trend_alert",
+      "metric": "tir_70_180",
+      "mean_a": 78.3996913580247,
+      "mean_b": 80.581569664903,
+      "diff": 2.1818783068783083,
+      "ci_low": 0.04844576719576646,
+      "ci_high": 4.556892085537919,
+      "wilcoxon_p": 0.1305814624272777,
+      "patients_improved": 18,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs B_standard+trend_alert",
+      "metric": "tbr_lt70",
+      "mean_a": 1.162257495590829,
+      "mean_b": 1.1256613756613756,
+      "diff": -0.03659611992945324,
+      "ci_low": -0.5299079585537919,
+      "ci_high": 0.45746252204585536,
+      "wilcoxon_p": 0.7303419969975948,
+      "patients_improved": 13,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs B_standard+trend_alert",
+      "metric": "tbr_lt54",
+      "mean_a": 0.0536816578483245,
+      "mean_b": 0.08630952380952381,
+      "diff": 0.03262786596119929,
+      "ci_low": -0.01907242063492064,
+      "ci_high": 0.09700451940035269,
+      "wilcoxon_p": 0.5179765383890086,
+      "patients_improved": 10,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs B_standard+trend_alert",
+      "metric": "tar_gt250",
+      "mean_a": 4.67228835978836,
+      "mean_b": 4.230489417989419,
+      "diff": -0.4417989417989419,
+      "ci_low": -1.0808228615520288,
+      "ci_high": 0.07330798059964737,
+      "wilcoxon_p": 0.44201206779242264,
+      "patients_improved": 11,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs B_standard+trend_alert",
+      "metric": "night_tbr_lt70",
+      "mean_a": 2.071428571428571,
+      "mean_b": 2.119803476946334,
+      "diff": 0.04837490551776256,
+      "ci_low": -0.892687074829932,
+      "ci_high": 0.9750661375661375,
+      "wilcoxon_p": 0.6971067560087962,
+      "patients_improved": 13,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs A_standard",
+      "metric": "tir_70_180",
+      "mean_a": 75.99393738977074,
+      "mean_b": 80.581569664903,
+      "diff": 4.587632275132275,
+      "ci_low": 2.926471560846558,
+      "ci_high": 6.422244268077599,
+      "wilcoxon_p": 6.917864084243774e-06,
+      "patients_improved": 25,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs A_standard",
+      "metric": "tbr_lt70",
+      "mean_a": 3.648148148148148,
+      "mean_b": 1.1256613756613756,
+      "diff": -2.5224867724867726,
+      "ci_low": -3.634047067901234,
+      "ci_high": -1.4589864417989415,
+      "wilcoxon_p": 4.4075772166252136e-05,
+      "patients_improved": 8,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs A_standard",
+      "metric": "tbr_lt54",
+      "mean_a": 0.552689594356261,
+      "mean_b": 0.08630952380952381,
+      "diff": -0.46638007054673714,
+      "ci_low": -0.6530037477954143,
+      "ci_high": -0.29562665343915356,
+      "wilcoxon_p": 5.429026133257015e-05,
+      "patients_improved": 5,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs A_standard",
+      "metric": "tar_gt250",
+      "mean_a": 4.548390652557319,
+      "mean_b": 4.230489417989419,
+      "diff": -0.31790123456790126,
+      "ci_low": -0.9202105379188715,
+      "ci_high": 0.1787918871252206,
+      "wilcoxon_p": 0.5480897994315235,
+      "patients_improved": 12,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs A_standard",
+      "metric": "night_tbr_lt70",
+      "mean_a": 7.541572184429327,
+      "mean_b": 2.119803476946334,
+      "diff": -5.421768707482993,
+      "ci_low": -7.544605064247921,
+      "ci_high": -3.2987433862433893,
+      "wilcoxon_p": 1.597777009010315e-05,
+      "patients_improved": 7,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs E_dosetwin_population_prior",
+      "metric": "tir_70_180",
+      "mean_a": 82.88646384479718,
+      "mean_b": 80.581569664903,
+      "diff": -2.3048941798941796,
+      "ci_low": -3.8668540564373903,
+      "ci_high": -0.6206431878306892,
+      "wilcoxon_p": 0.01209351669923487,
+      "patients_improved": 10,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs E_dosetwin_population_prior",
+      "metric": "tbr_lt70",
+      "mean_a": 1.2778880070546736,
+      "mean_b": 1.1256613756613756,
+      "diff": -0.152226631393298,
+      "ci_low": -0.49989252645502635,
+      "ci_high": 0.19610063932980595,
+      "wilcoxon_p": 0.3284698575735092,
+      "patients_improved": 14,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs E_dosetwin_population_prior",
+      "metric": "tbr_lt54",
+      "mean_a": 0.08366402116402118,
+      "mean_b": 0.08630952380952381,
+      "diff": 0.0026455026455026397,
+      "ci_low": -0.07418981481481482,
+      "ci_high": 0.07639164462081122,
+      "wilcoxon_p": 0.8202800980995039,
+      "patients_improved": 8,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs E_dosetwin_population_prior",
+      "metric": "tar_gt250",
+      "mean_a": 3.34292328042328,
+      "mean_b": 4.230489417989419,
+      "diff": 0.8875661375661376,
+      "ci_low": 0.21294642857142854,
+      "ci_high": 1.7352540784832449,
+      "wilcoxon_p": 0.028795498649410566,
+      "patients_improved": 18,
+      "n": 30
+    },
+    {
+      "comparison": "D_dosetwin vs E_dosetwin_population_prior",
+      "metric": "night_tbr_lt70",
+      "mean_a": 1.8873771730914586,
+      "mean_b": 2.119803476946334,
+      "diff": 0.23242630385487523,
+      "ci_low": -0.2834750566893425,
+      "ci_high": 0.7906368102796674,
+      "wilcoxon_p": 0.42368977533956986,
+      "patients_improved": 15,
+      "n": 30
+    },
+    {
+      "comparison": "C_twin_dose+trend_alert vs B_standard+trend_alert",
+      "metric": "tir_70_180",
+      "mean_a": 78.3996913580247,
+      "mean_b": 79.798721340388,
+      "diff": 1.3990299823633163,
+      "ci_low": -0.7042576058200988,
+      "ci_high": 3.7963762125220466,
+      "wilcoxon_p": 0.3654490375803874,
+      "patients_improved": 17,
+      "n": 30
+    },
+    {
+      "comparison": "C_twin_dose+trend_alert vs B_standard+trend_alert",
+      "metric": "tbr_lt70",
+      "mean_a": 1.162257495590829,
+      "mean_b": 1.3775352733686066,
+      "diff": 0.21527777777777793,
+      "ci_low": -0.2532104276895943,
+      "ci_high": 0.683989197530864,
+      "wilcoxon_p": 0.2988441474735737,
+      "patients_improved": 16,
+      "n": 30
+    },
+    {
+      "comparison": "C_twin_dose+trend_alert vs B_standard+trend_alert",
+      "metric": "tbr_lt54",
+      "mean_a": 0.0536816578483245,
+      "mean_b": 0.11078042328042328,
+      "diff": 0.057098765432098776,
+      "ci_low": 0.006613756613756614,
+      "ci_high": 0.11464395943562602,
+      "wilcoxon_p": 0.05906817735175316,
+      "patients_improved": 10,
+      "n": 30
+    },
+    {
+      "comparison": "C_twin_dose+trend_alert vs B_standard+trend_alert",
+      "metric": "tar_gt250",
+      "mean_a": 4.67228835978836,
+      "mean_b": 4.306878306878307,
+      "diff": -0.36541005291005285,
+      "ci_low": -0.9948495370370367,
+      "ci_high": 0.17306272045855395,
+      "wilcoxon_p": 0.613892513437776,
+      "patients_improved": 12,
+      "n": 30
+    },
+    {
+      "comparison": "C_twin_dose+trend_alert vs B_standard+trend_alert",
+      "metric": "night_tbr_lt70",
+      "mean_a": 2.071428571428571,
+      "mean_b": 2.752078609221466,
+      "diff": 0.6806500377928948,
+      "ci_low": -0.22488662131519283,
+      "ci_high": 1.6251039304610728,
+      "wilcoxon_p": 0.1385561420166171,
+      "patients_improved": 18,
+      "n": 30
+    }
+  ],
+  "settings_recovery": {
+    "cr_median_abs_pct_error_prescribed": 36.674454094693466,
+    "cr_median_abs_pct_error_twin": 27.58709153879681,
+    "cf_median_abs_pct_error_prescribed": 22.9725760748449,
+    "cf_median_abs_pct_error_twin": 21.750721825419976,
+    "cr_twin_closer_fraction": 0.5333333333333333,
+    "cf_twin_closer_fraction": 0.4777777777777778
+  },
+  "alerts_at_matched_false_alarm": [
+    {
+      "budget_false_per_day": 1.0,
+      "method": "cgm_trend_30",
+      "sensitivity": 0.474,
+      "false_alerts_per_day": 0.921,
+      "median_lead_min": 21.0,
+      "precision": 0.316
+    },
+    {
+      "budget_false_per_day": 1.0,
+      "method": "dosetwin_hybrid",
+      "sensitivity": 0.569,
+      "false_alerts_per_day": 0.943,
+      "median_lead_min": 18.833,
+      "precision": 0.356
+    },
+    {
+      "budget_false_per_day": 1.0,
+      "method": "lightgbm",
+      "sensitivity": 0.582,
+      "false_alerts_per_day": 0.935,
+      "median_lead_min": 37.333,
+      "precision": 0.429
+    },
+    {
+      "budget_false_per_day": 1.0,
+      "method": "twin_40",
+      "sensitivity": 0.453,
+      "false_alerts_per_day": 0.805,
+      "median_lead_min": 19.167,
+      "precision": 0.356
+    },
+    {
+      "budget_false_per_day": 2.0,
+      "method": "cgm_trend_30",
+      "sensitivity": 0.713,
+      "false_alerts_per_day": 1.759,
+      "median_lead_min": 26.0,
+      "precision": 0.282
+    },
+    {
+      "budget_false_per_day": 2.0,
+      "method": "dosetwin_hybrid",
+      "sensitivity": 0.803,
+      "false_alerts_per_day": 1.865,
+      "median_lead_min": 26.333,
+      "precision": 0.303
+    },
+    {
+      "budget_false_per_day": 2.0,
+      "method": "lightgbm",
+      "sensitivity": 0.729,
+      "false_alerts_per_day": 1.857,
+      "median_lead_min": 41.0,
+      "precision": 0.334
+    },
+    {
+      "budget_false_per_day": 2.0,
+      "method": "twin_40",
+      "sensitivity": 0.623,
+      "false_alerts_per_day": 1.595,
+      "median_lead_min": 25.167,
+      "precision": 0.293
+    },
+    {
+      "budget_false_per_day": 3.0,
+      "method": "cgm_trend_30",
+      "sensitivity": 0.852,
+      "false_alerts_per_day": 2.781,
+      "median_lead_min": 30.833,
+      "precision": 0.243
+    },
+    {
+      "budget_false_per_day": 3.0,
+      "method": "dosetwin_hybrid",
+      "sensitivity": 0.906,
+      "false_alerts_per_day": 2.787,
+      "median_lead_min": 31.333,
+      "precision": 0.262
+    },
+    {
+      "budget_false_per_day": 3.0,
+      "method": "lightgbm",
+      "sensitivity": 0.831,
+      "false_alerts_per_day": 2.63,
+      "median_lead_min": 42.0,
+      "precision": 0.295
+    },
+    {
+      "budget_false_per_day": 3.0,
+      "method": "twin_40",
+      "sensitivity": 0.8,
+      "false_alerts_per_day": 2.649,
+      "median_lead_min": 29.167,
+      "precision": 0.256
+    }
+  ],
+  "runtime_minutes": 15.1
+}

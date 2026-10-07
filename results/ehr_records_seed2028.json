@@ -1,0 +1,1486 @@
+[
+ {
+  "patient_id": "adolescent#001",
+  "demographics": {
+   "age": 18,
+   "sex": "female",
+   "height_cm": 162,
+   "weight_kg": 68.7,
+   "bmi": 26.0,
+   "state": "Telangana"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 10
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.9,
+   "fasting_c_peptide_nmol_l": 0.12,
+   "egfr_ml_min": 70,
+   "tsh_miu_l": 2.5,
+   "ldl_mg_dl": 100,
+   "urine_acr_mg_g": 12
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR4/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 13.2,
+   "correction_factor_mgdl_per_u": 14.4,
+   "basal_u_per_day": 23.2,
+   "total_daily_insulin_u": 36.7
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "23 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 13 g carbohydrate; 1 U lowers glucose 14 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "50 mcg daily"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#002",
+  "demographics": {
+   "age": 19,
+   "sex": "male",
+   "height_cm": 170,
+   "weight_kg": 51.0,
+   "bmi": 17.6,
+   "state": "Goa"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 16
+   },
+   {
+    "code": "K90.0",
+    "display": "Coeliac disease"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 8.4,
+   "fasting_c_peptide_nmol_l": 0.1,
+   "egfr_ml_min": 101,
+   "tsh_miu_l": 1.9,
+   "ldl_mg_dl": 84,
+   "urine_acr_mg_g": 16
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 4.4,
+   "correction_factor_mgdl_per_u": 11.2,
+   "basal_u_per_day": 20.8,
+   "total_daily_insulin_u": 62.0
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "21 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 4 g carbohydrate; 1 U lowers glucose 11 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#003",
+  "demographics": {
+   "age": 15,
+   "sex": "female",
+   "height_cm": 171,
+   "weight_kg": 44.8,
+   "bmi": 15.2,
+   "state": "Uttar Pradesh"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 12
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.5,
+   "fasting_c_peptide_nmol_l": 0.13,
+   "egfr_ml_min": 128,
+   "tsh_miu_l": 3.9,
+   "ldl_mg_dl": 104,
+   "urine_acr_mg_g": 13
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 20.0,
+   "correction_factor_mgdl_per_u": 40.0,
+   "basal_u_per_day": 18.2,
+   "total_daily_insulin_u": 24.2
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "18 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 20 g carbohydrate; 1 U lowers glucose 40 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "50 mcg daily"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#004",
+  "demographics": {
+   "age": 17,
+   "sex": "male",
+   "height_cm": 166,
+   "weight_kg": 49.6,
+   "bmi": 18.1,
+   "state": "Delhi"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 12
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.4,
+   "fasting_c_peptide_nmol_l": 0.07,
+   "egfr_ml_min": 91,
+   "tsh_miu_l": 1.3,
+   "ldl_mg_dl": 87,
+   "urine_acr_mg_g": 11
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR4/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 17.3,
+   "correction_factor_mgdl_per_u": 24.1,
+   "basal_u_per_day": 17.1,
+   "total_daily_insulin_u": 35.3
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "17 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 17 g carbohydrate; 1 U lowers glucose 24 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#005",
+  "demographics": {
+   "age": 16,
+   "sex": "female",
+   "height_cm": 173,
+   "weight_kg": 47.1,
+   "bmi": 15.7,
+   "state": "Delhi"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 12
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.8,
+   "fasting_c_peptide_nmol_l": 0.13,
+   "egfr_ml_min": 98,
+   "tsh_miu_l": 2.1,
+   "ldl_mg_dl": 66,
+   "urine_acr_mg_g": 13
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 15.3,
+   "correction_factor_mgdl_per_u": 25.8,
+   "basal_u_per_day": 16.0,
+   "total_daily_insulin_u": 34.0
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "16 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 15 g carbohydrate; 1 U lowers glucose 26 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#006",
+  "demographics": {
+   "age": 14,
+   "sex": "female",
+   "height_cm": 169,
+   "weight_kg": 45.4,
+   "bmi": 15.9,
+   "state": "Uttar Pradesh"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 12
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.3,
+   "fasting_c_peptide_nmol_l": 0.03,
+   "egfr_ml_min": 115,
+   "tsh_miu_l": 1.8,
+   "ldl_mg_dl": 78,
+   "urine_acr_mg_g": 37
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR3",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 7.0,
+   "correction_factor_mgdl_per_u": 18.2,
+   "basal_u_per_day": 22.5,
+   "total_daily_insulin_u": 49.6
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "22 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 7 g carbohydrate; 1 U lowers glucose 18 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#007",
+  "demographics": {
+   "age": 16,
+   "sex": "female",
+   "height_cm": 173,
+   "weight_kg": 37.9,
+   "bmi": 12.7,
+   "state": "Kerala"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 12
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.1,
+   "fasting_c_peptide_nmol_l": 0.11,
+   "egfr_ml_min": 113,
+   "tsh_miu_l": 4.6,
+   "ldl_mg_dl": 123,
+   "urine_acr_mg_g": 20
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 8.6,
+   "correction_factor_mgdl_per_u": 11.6,
+   "basal_u_per_day": 19.6,
+   "total_daily_insulin_u": 43.6
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "20 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 9 g carbohydrate; 1 U lowers glucose 12 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "25 mcg daily"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#008",
+  "demographics": {
+   "age": 14,
+   "sex": "male",
+   "height_cm": 156,
+   "weight_kg": 41.2,
+   "bmi": 16.8,
+   "state": "Telangana"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 6
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.7,
+   "fasting_c_peptide_nmol_l": 0.13,
+   "egfr_ml_min": 109,
+   "tsh_miu_l": 1.7,
+   "ldl_mg_dl": 70,
+   "urine_acr_mg_g": 16
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 4.7,
+   "correction_factor_mgdl_per_u": 14.6,
+   "basal_u_per_day": 13.3,
+   "total_daily_insulin_u": 63.4
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "13 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 5 g carbohydrate; 1 U lowers glucose 15 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#009",
+  "demographics": {
+   "age": 19,
+   "sex": "female",
+   "height_cm": 151,
+   "weight_kg": 43.9,
+   "bmi": 19.3,
+   "state": "Kerala"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 9
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.1,
+   "fasting_c_peptide_nmol_l": 0.02,
+   "egfr_ml_min": 100,
+   "tsh_miu_l": 2.2,
+   "ldl_mg_dl": 97,
+   "urine_acr_mg_g": 5
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR4/X",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 24.9,
+   "correction_factor_mgdl_per_u": 24.3,
+   "basal_u_per_day": 16.0,
+   "total_daily_insulin_u": 24.1
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "16 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 25 g carbohydrate; 1 U lowers glucose 24 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adolescent#010",
+  "demographics": {
+   "age": 17,
+   "sex": "male",
+   "height_cm": 170,
+   "weight_kg": 47.4,
+   "bmi": 16.4,
+   "state": "West Bengal"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 5
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.0,
+   "fasting_c_peptide_nmol_l": 0.03,
+   "egfr_ml_min": 102,
+   "tsh_miu_l": 2.4,
+   "ldl_mg_dl": 87,
+   "urine_acr_mg_g": 40
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 16.8,
+   "correction_factor_mgdl_per_u": 32.8,
+   "basal_u_per_day": 15.4,
+   "total_daily_insulin_u": 33.2
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "15 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 17 g carbohydrate; 1 U lowers glucose 33 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#001",
+  "demographics": {
+   "age": 61,
+   "sex": "female",
+   "height_cm": 147,
+   "weight_kg": 102.3,
+   "bmi": 47.5,
+   "state": "Gujarat"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 12
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.9,
+   "fasting_c_peptide_nmol_l": 0.04,
+   "egfr_ml_min": 75,
+   "tsh_miu_l": 2.8,
+   "ldl_mg_dl": 98,
+   "urine_acr_mg_g": 15
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/X",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 12.9,
+   "correction_factor_mgdl_per_u": 9.8,
+   "basal_u_per_day": 28.3,
+   "total_daily_insulin_u": 50.4
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "28 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 13 g carbohydrate; 1 U lowers glucose 10 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#002",
+  "demographics": {
+   "age": 65,
+   "sex": "female",
+   "height_cm": 158,
+   "weight_kg": 111.1,
+   "bmi": 44.4,
+   "state": "Kerala"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 17
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.0,
+   "fasting_c_peptide_nmol_l": 0.04,
+   "egfr_ml_min": 95,
+   "tsh_miu_l": 2.2,
+   "ldl_mg_dl": 140,
+   "urine_acr_mg_g": 7
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR4/X",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 6.7,
+   "correction_factor_mgdl_per_u": 10.5,
+   "basal_u_per_day": 30.1,
+   "total_daily_insulin_u": 57.9
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "30 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 7 g carbohydrate; 1 U lowers glucose 10 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#003",
+  "demographics": {
+   "age": 27,
+   "sex": "female",
+   "height_cm": 135,
+   "weight_kg": 81.6,
+   "bmi": 44.9,
+   "state": "Goa"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 21
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 8.0,
+   "fasting_c_peptide_nmol_l": 0.04,
+   "egfr_ml_min": 107,
+   "tsh_miu_l": 2.5,
+   "ldl_mg_dl": 95,
+   "urine_acr_mg_g": 8
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 11.5,
+   "correction_factor_mgdl_per_u": 18.9,
+   "basal_u_per_day": 30.6,
+   "total_daily_insulin_u": 56.4
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "31 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 12 g carbohydrate; 1 U lowers glucose 19 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#004",
+  "demographics": {
+   "age": 66,
+   "sex": "female",
+   "height_cm": 146,
+   "weight_kg": 63.0,
+   "bmi": 29.4,
+   "state": "Telangana"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 14
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.1,
+   "fasting_c_peptide_nmol_l": 0.11,
+   "egfr_ml_min": 107,
+   "tsh_miu_l": 1.9,
+   "ldl_mg_dl": 118,
+   "urine_acr_mg_g": 16
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/X",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 13.5,
+   "correction_factor_mgdl_per_u": 47.4,
+   "basal_u_per_day": 21.9,
+   "total_daily_insulin_u": 33.8
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "22 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 14 g carbohydrate; 1 U lowers glucose 47 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "25 mcg daily"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#005",
+  "demographics": {
+   "age": 52,
+   "sex": "male",
+   "height_cm": 166,
+   "weight_kg": 94.1,
+   "bmi": 34.4,
+   "state": "Gujarat"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 19
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.8,
+   "fasting_c_peptide_nmol_l": 0.1,
+   "egfr_ml_min": 95,
+   "tsh_miu_l": 2.0,
+   "ldl_mg_dl": 109,
+   "urine_acr_mg_g": 8
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR3",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 6.3,
+   "correction_factor_mgdl_per_u": 8.7,
+   "basal_u_per_day": 29.4,
+   "total_daily_insulin_u": 68.3
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "29 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 6 g carbohydrate; 1 U lowers glucose 9 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#006",
+  "demographics": {
+   "age": 26,
+   "sex": "female",
+   "height_cm": 158,
+   "weight_kg": 66.1,
+   "bmi": 26.5,
+   "state": "Maharashtra"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 22
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.4,
+   "fasting_c_peptide_nmol_l": 0.11,
+   "egfr_ml_min": 114,
+   "tsh_miu_l": 2.8,
+   "ldl_mg_dl": 118,
+   "urine_acr_mg_g": 25
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 8.8,
+   "correction_factor_mgdl_per_u": 17.9,
+   "basal_u_per_day": 42.9,
+   "total_daily_insulin_u": 61.4
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "43 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 9 g carbohydrate; 1 U lowers glucose 18 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#007",
+  "demographics": {
+   "age": 35,
+   "sex": "male",
+   "height_cm": 154,
+   "weight_kg": 91.2,
+   "bmi": 38.3,
+   "state": "Gujarat"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 15
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   },
+   {
+    "code": "E10.3",
+    "display": "Background diabetic retinopathy"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.7,
+   "fasting_c_peptide_nmol_l": 0.13,
+   "egfr_ml_min": 98,
+   "tsh_miu_l": 4.9,
+   "ldl_mg_dl": 118,
+   "urine_acr_mg_g": 2
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/X",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 20.7,
+   "correction_factor_mgdl_per_u": 22.7,
+   "basal_u_per_day": 35.7,
+   "total_daily_insulin_u": 42.0
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "36 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 21 g carbohydrate; 1 U lowers glucose 23 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "25 mcg daily"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#008",
+  "demographics": {
+   "age": 48,
+   "sex": "female",
+   "height_cm": 153,
+   "weight_kg": 102.8,
+   "bmi": 44.0,
+   "state": "Maharashtra"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 15
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.1,
+   "fasting_c_peptide_nmol_l": 0.11,
+   "egfr_ml_min": 67,
+   "tsh_miu_l": 1.6,
+   "ldl_mg_dl": 104,
+   "urine_acr_mg_g": 5
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 16.2,
+   "correction_factor_mgdl_per_u": 15.5,
+   "basal_u_per_day": 26.2,
+   "total_daily_insulin_u": 42.8
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "26 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 16 g carbohydrate; 1 U lowers glucose 16 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#009",
+  "demographics": {
+   "age": 68,
+   "sex": "male",
+   "height_cm": 177,
+   "weight_kg": 74.6,
+   "bmi": 23.7,
+   "state": "Kerala"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 11
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.6,
+   "fasting_c_peptide_nmol_l": 0.05,
+   "egfr_ml_min": 89,
+   "tsh_miu_l": 3.9,
+   "ldl_mg_dl": 126,
+   "urine_acr_mg_g": 9
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR4/X",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 6.5,
+   "correction_factor_mgdl_per_u": 6.9,
+   "basal_u_per_day": 26.1,
+   "total_daily_insulin_u": 67.2
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "26 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 6 g carbohydrate; 1 U lowers glucose 7 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "adult#010",
+  "demographics": {
+   "age": 68,
+   "sex": "female",
+   "height_cm": 165,
+   "weight_kg": 73.9,
+   "bmi": 27.1,
+   "state": "Telangana"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 22
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.7,
+   "fasting_c_peptide_nmol_l": 0.09,
+   "egfr_ml_min": 86,
+   "tsh_miu_l": 1.1,
+   "ldl_mg_dl": 104,
+   "urine_acr_mg_g": 7
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 4.3,
+   "correction_factor_mgdl_per_u": 8.2,
+   "basal_u_per_day": 20.9,
+   "total_daily_insulin_u": 64.4
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "21 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 4 g carbohydrate; 1 U lowers glucose 8 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#001",
+  "demographics": {
+   "age": 9,
+   "sex": "female",
+   "height_cm": 159,
+   "weight_kg": 34.6,
+   "bmi": 13.7,
+   "state": "Karnataka"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 3
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.4,
+   "fasting_c_peptide_nmol_l": 0.08,
+   "egfr_ml_min": 106,
+   "tsh_miu_l": 2.4,
+   "ldl_mg_dl": 85,
+   "urine_acr_mg_g": 19
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 30.6,
+   "correction_factor_mgdl_per_u": 34.4,
+   "basal_u_per_day": 8.0,
+   "total_daily_insulin_u": 17.5
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "8 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 31 g carbohydrate; 1 U lowers glucose 34 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#002",
+  "demographics": {
+   "age": 9,
+   "sex": "male",
+   "height_cm": 153,
+   "weight_kg": 28.5,
+   "bmi": 12.2,
+   "state": "Uttar Pradesh"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 4
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.9,
+   "fasting_c_peptide_nmol_l": 0.09,
+   "egfr_ml_min": 108,
+   "tsh_miu_l": 1.3,
+   "ldl_mg_dl": 80,
+   "urine_acr_mg_g": 5
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 19.9,
+   "correction_factor_mgdl_per_u": 43.8,
+   "basal_u_per_day": 10.8,
+   "total_daily_insulin_u": 18.2
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "11 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 20 g carbohydrate; 1 U lowers glucose 44 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#003",
+  "demographics": {
+   "age": 8,
+   "sex": "male",
+   "height_cm": 140,
+   "weight_kg": 41.2,
+   "bmi": 21.1,
+   "state": "Telangana"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 5
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.7,
+   "fasting_c_peptide_nmol_l": 0.11,
+   "egfr_ml_min": 97,
+   "tsh_miu_l": 3.8,
+   "ldl_mg_dl": 143,
+   "urine_acr_mg_g": 19
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "negative"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 25.6,
+   "correction_factor_mgdl_per_u": 31.2,
+   "basal_u_per_day": 7.6,
+   "total_daily_insulin_u": 16.0
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "8 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 26 g carbohydrate; 1 U lowers glucose 31 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "75 mcg daily"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#004",
+  "demographics": {
+   "age": 12,
+   "sex": "male",
+   "height_cm": 150,
+   "weight_kg": 35.5,
+   "bmi": 15.7,
+   "state": "Goa"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 5
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.7,
+   "fasting_c_peptide_nmol_l": 0.03,
+   "egfr_ml_min": 108,
+   "tsh_miu_l": 2.3,
+   "ldl_mg_dl": 57,
+   "urine_acr_mg_g": 11
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR3",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 24.0,
+   "correction_factor_mgdl_per_u": 48.9,
+   "basal_u_per_day": 11.2,
+   "total_daily_insulin_u": 19.8
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "11 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 24 g carbohydrate; 1 U lowers glucose 49 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#005",
+  "demographics": {
+   "age": 10,
+   "sex": "male",
+   "height_cm": 147,
+   "weight_kg": 37.8,
+   "bmi": 17.4,
+   "state": "Maharashtra"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 7
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.1,
+   "fasting_c_peptide_nmol_l": 0.14,
+   "egfr_ml_min": 110,
+   "tsh_miu_l": 2.1,
+   "ldl_mg_dl": 64,
+   "urine_acr_mg_g": 23
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 7.5,
+   "correction_factor_mgdl_per_u": 36.7,
+   "basal_u_per_day": 10.6,
+   "total_daily_insulin_u": 40.9
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "11 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 8 g carbohydrate; 1 U lowers glucose 37 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#006",
+  "demographics": {
+   "age": 8,
+   "sex": "female",
+   "height_cm": 140,
+   "weight_kg": 41.0,
+   "bmi": 20.9,
+   "state": "Telangana"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 6
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 6.2,
+   "fasting_c_peptide_nmol_l": 0.11,
+   "egfr_ml_min": 103,
+   "tsh_miu_l": 1.6,
+   "ldl_mg_dl": 80,
+   "urine_acr_mg_g": 4
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 23.8,
+   "correction_factor_mgdl_per_u": 50.4,
+   "basal_u_per_day": 10.8,
+   "total_daily_insulin_u": 20.2
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "11 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 24 g carbohydrate; 1 U lowers glucose 50 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#007",
+  "demographics": {
+   "age": 9,
+   "sex": "male",
+   "height_cm": 159,
+   "weight_kg": 45.5,
+   "bmi": 18.1,
+   "state": "Tamil Nadu"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 8
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.3,
+   "fasting_c_peptide_nmol_l": 0.09,
+   "egfr_ml_min": 108,
+   "tsh_miu_l": 2.6,
+   "ldl_mg_dl": 80,
+   "urine_acr_mg_g": 10
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR3",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 9.6,
+   "correction_factor_mgdl_per_u": 24.0,
+   "basal_u_per_day": 12.5,
+   "total_daily_insulin_u": 36.2
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "12 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 10 g carbohydrate; 1 U lowers glucose 24 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#008",
+  "demographics": {
+   "age": 10,
+   "sex": "male",
+   "height_cm": 155,
+   "weight_kg": 23.7,
+   "bmi": 9.8,
+   "state": "Karnataka"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 8
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 8.3,
+   "fasting_c_peptide_nmol_l": 0.13,
+   "egfr_ml_min": 106,
+   "tsh_miu_l": 2.1,
+   "ldl_mg_dl": 73,
+   "urine_acr_mg_g": 8
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/X",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 16.1,
+   "correction_factor_mgdl_per_u": 25.8,
+   "basal_u_per_day": 7.8,
+   "total_daily_insulin_u": 21.5
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "8 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 16 g carbohydrate; 1 U lowers glucose 26 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#009",
+  "demographics": {
+   "age": 7,
+   "sex": "male",
+   "height_cm": 146,
+   "weight_kg": 35.5,
+   "bmi": 16.6,
+   "state": "Karnataka"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 4
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 5.7,
+   "fasting_c_peptide_nmol_l": 0.15,
+   "egfr_ml_min": 95,
+   "tsh_miu_l": 2.1,
+   "ldl_mg_dl": 88,
+   "urine_acr_mg_g": 15
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 18.9,
+   "correction_factor_mgdl_per_u": 33.8,
+   "basal_u_per_day": 10.2,
+   "total_daily_insulin_u": 17.4
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "10 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 19 g carbohydrate; 1 U lowers glucose 34 mg/dL"
+   }
+  ]
+ },
+ {
+  "patient_id": "child#010",
+  "demographics": {
+   "age": 12,
+   "sex": "female",
+   "height_cm": 152,
+   "weight_kg": 35.2,
+   "bmi": 15.2,
+   "state": "Maharashtra"
+  },
+  "conditions": [
+   {
+    "code": "E10",
+    "display": "Type 1 diabetes mellitus",
+    "onset_age": 9
+   },
+   {
+    "code": "E03.9",
+    "display": "Hypothyroidism (autoimmune)"
+   }
+  ],
+  "labs": {
+   "hba1c_pct": 7.2,
+   "fasting_c_peptide_nmol_l": 0.13,
+   "egfr_ml_min": 106,
+   "tsh_miu_l": 3.8,
+   "ldl_mg_dl": 90,
+   "urine_acr_mg_g": 4
+  },
+  "genetics": {
+   "hla_dr_genotype": "DR3/DR4",
+   "gad65_antibody_at_diagnosis": "positive"
+  },
+  "prescriptions": {
+   "carb_ratio_g_per_u": 19.6,
+   "correction_factor_mgdl_per_u": 37.6,
+   "basal_u_per_day": 9.5,
+   "total_daily_insulin_u": 20.7
+  },
+  "medications": [
+   {
+    "drug": "Insulin glargine",
+    "dose": "10 U once daily"
+   },
+   {
+    "drug": "Insulin aspart (pen)",
+    "dose": "1 U per 20 g carbohydrate; 1 U lowers glucose 38 mg/dL"
+   },
+   {
+    "drug": "Levothyroxine",
+    "dose": "25 mcg daily"
+   }
+  ]
+ }
+]
