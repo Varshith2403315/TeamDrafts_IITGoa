@@ -203,7 +203,7 @@ dialog.guide::backdrop { background: rgba(15, 27, 42, .45); }
 </style>
 
 <header class="appbar">
-  <div class="brand"><span class="logo" aria-hidden="true">DT</span><div><b>DoseTwin</b><br><span>Personal insulin-dosing twin</span></div></div>
+  <div class="brand"><span class="logo" aria-hidden="true">DT</span><div><b>DoseTwin</b><br><span>Digital twin for insulin-treated diabetes</span></div></div>
   <nav class="views" role="tablist" aria-label="Views">
     <button class="vtab" role="tab" data-view="patients" aria-selected="true">Patients</button>
     <button class="vtab" role="tab" data-view="dose" aria-selected="false">Dose check</button>
@@ -217,7 +217,7 @@ dialog.guide::backdrop { background: rgba(15, 27, 42, .45); }
 <main class="page">
 
   <section class="view" id="view-patients">
-    <div class="viewhead"><h1>Patient review</h1><p>Patients ranked by hypoglycaemia risk over the last 7 days. Open a patient to see the record, the glucose profile and the settings the twin suggests. Move a setting and the virtual patient replays a real day under it.</p></div>
+    <div class="viewhead"><h1>Patient review</h1><p>Patients ranked by hypoglycaemia risk: last week's lows plus tonight's bedtime check. Open a patient to see the record, the glucose profile, tonight's night-time forecast and the settings the twin suggests. Move a setting and the virtual patient replays a real day under it.</p></div>
     <div class="clinic" style="margin-top:12px">
       <nav class="plist" id="plist" aria-label="Patients"><h3>30 patients · highest risk first</h3></nav>
       <div class="pdetail" id="pdetail"></div>
@@ -275,7 +275,7 @@ dialog.guide::backdrop { background: rgba(15, 27, 42, .45); }
   </section>
 
   <section class="view" id="view-evidence" hidden>
-    <div class="viewhead"><h1>Evidence · 90 held-out patient-weeks</h1><p id="evLede"></p></div>
+    <div class="viewhead"><h1>Evidence · 90 held-out patient-weeks, 529 nights</h1><p id="evLede"></p></div>
     <div style="display:grid;gap:16px;margin-top:12px">
       <div class="headline" id="evHead"></div>
       <div class="panel"><div class="ptitle">Outcomes by arm · evaluation days 8–14</div><div class="tablewrap" style="border:0"><table id="armTable"></table></div></div>
@@ -287,10 +287,10 @@ dialog.guide::backdrop { background: rgba(15, 27, 42, .45); }
     <div class="viewhead"><h1>Method</h1><p>From device data to a dose recommendation.</p></div>
     <div style="display:grid;gap:16px;margin-top:12px">
       <div class="flow">
-        <div class="card"><h3>Collect</h3><p class="muted">CGM every 5 min, smart-pen doses, meal log, phone steps, and the synthetic health record (diagnoses, labs including HbA1c, genetics, prescriptions).</p></div>
-        <div class="card"><h3>Personalise</h3><p class="muted">An extended Bergman model starts from the record (weight, prescriptions, HbA1c) and is fitted to the patient's own 5-hour forecasts (MAP, robust loss) in about a second.</p></div>
-        <div class="card"><h3>Synchronise</h3><p class="muted">An observer keeps the twin locked to the CGM, so it always knows insulin on board, carbs on board and recent activity.</p></div>
-        <div class="card"><h3>Decide</h3><p class="muted">Every half-unit dose is simulated for 5 h. Doses whose pessimistic path dips below 70 mg/dL are rejected; the lowest-risk safe dose is shown. Lows are predicted from the twin plus the CGM trend.</p></div>
+        <div class="card"><h3>Collect</h3><p class="muted">CGM every 5 min, smart-pen doses, meal log, steps, heart rate and sleep from a wearable, and the synthetic health record (diagnoses, labs including HbA1c and eGFR, genetics, prescriptions).</p></div>
+        <div class="card"><h3>Personalise</h3><p class="muted">An extended Bergman model starts from the record (weight, prescriptions, HbA1c, kidney function) and is fitted to the patient's own 5-hour forecasts (MAP, robust loss) in about a second. It learns how much a short night weakens insulin.</p></div>
+        <div class="card"><h3>Synchronise</h3><p class="muted">An observer keeps the twin locked to the CGM, so it always knows insulin on board, carbs on board, recent activity (steps or heart rate) and last night's sleep.</p></div>
+        <div class="card"><h3>Decide</h3><p class="muted">Every half-unit dose is simulated for 5 h and the lowest-risk safe dose is shown. At 23:00 the twin simulates the whole night and suggests a bedtime snack if a low is likely. Patients with a history of severe lows get a higher safety floor and earlier alerts.</p></div>
       </div>
       <div class="panel limits"><div class="ptitle">What this does not show yet</div><div class="pbody"><ul id="limits"></ul></div></div>
     </div>
@@ -301,9 +301,9 @@ dialog.guide::backdrop { background: rgba(15, 27, 42, .45); }
 <dialog class="guide" id="guide" aria-labelledby="guideTitle">
   <div class="guide-head"><h2 id="guideTitle">How to use DoseTwin</h2><button class="guide-close" id="closeGuideX" type="button" aria-label="Close">×</button></div>
   <div class="guide-body">
-    <p>DoseTwin builds a personal glucose–insulin model (a digital twin) for each patient from their CGM, insulin-pen, meal and step data plus their health record. All patients here are synthetic.</p>
+    <p>DoseTwin builds a personal glucose–insulin model (a digital twin) for each person on insulin from their CGM, insulin-pen, meal, step, heart-rate and sleep data plus their health record. All patients here are synthetic.</p>
     <ol class="steps">
-      <li><b>Patients: pick a patient</b><span>The list is sorted by hypoglycaemia risk. Open a patient to see last week's glucose profile, time-in-range metrics and their health record.</span></li>
+      <li><b>Patients: pick a patient</b><span>The list is sorted by hypoglycaemia risk, including tonight's bedtime check. Open a patient to see last week's glucose profile, their health record and wearables, and the twin's forecast for tonight.</span></li>
       <li><b>Try new settings on the virtual patient</b><span>In Settings review, click "Try suggestion" or move the carb ratio, correction and basal sliders. The twin replays a real day from last week so you can compare current and trial settings.</span></li>
       <li><b>Dose check: test a meal dose</b><span>Choose a patient tab, drag the dose slider and compare the bolus calculator with the twin's recommendation. Click "Show what really happened" to see the true outcome of each dose.</span></li>
       <li><b>Evidence and Method</b><span>See the held-out results against standard care and how the twin is built and validated.</span></li>
@@ -332,7 +332,7 @@ const CLINIC = /*CLINIC*/;
 
   function sim(p, d) {
     const t = p.twin, m = p.meal;
-    return DoseTwinModel.forecast(t.theta, m.z, { b: t.basal_u_per_min, W: t.W, minute0: m.minute_abs, H, bolus: d, carbs: m.carbs_logged });
+    return DoseTwinModel.forecast(t.theta, m.z, { b: t.basal_u_per_min, W: t.W, minute0: m.minute_abs, H, bolus: d, carbs: m.carbs_logged, sleepDebt: m.sleep_debt || 0 });
   }
 
   function axes(svg, { x0, x1, y0, y1, w, h, pad, xticks, yticks, xfmt }) {
@@ -407,8 +407,9 @@ const CLINIC = /*CLINIC*/;
         <dl class="kv"><dt>Dawn rise</dt><dd>+${fmt(t.dawn_rise_mgdl_per_h)} mg/dL/h</dd>
         <dt>45-min walk lowers glucose by</dt><dd>${fmt(t.walk_drop_mgdl)} mg/dL</dd>
         <dt>Carb absorption time</dt><dd>${fmt(t.carb_absorption_min)} min</dd>
-        <dt>Insulin absorption time</dt><dd>${fmt(t.insulin_absorption_min)} min</dd></dl>
-        <p class="muted" style="font-size:.85rem">Learned from CGM, pen log and phone steps only.</p></div>`;
+        <dt>Insulin absorption time</dt><dd>${fmt(t.insulin_absorption_min)} min</dd>
+        <dt>After a 4-hour night, insulin works</dt><dd>${fmt(t.sleep_effect_pct_after_4h_night)}% less</dd></dl>
+        <p class="muted" style="font-size:.85rem">Learned from CGM, pen log, steps, heart rate and sleep only.</p></div>`;
   }
 
   function drawDay() {
@@ -455,42 +456,56 @@ const CLINIC = /*CLINIC*/;
   function drawEvidence() {
     const arms = Object.fromEntries(STUDY.glycemic_by_arm.map((a) => [a.arm, a]));
     const comp = (b, a, mtr) => STUDY.paired_comparisons.find((c) => c.comparison === `${b} vs ${a}` && c.metric === mtr);
-    const A = arms["A_standard"], B = arms["B_standard+trend_alert"], Dd = arms["D_dosetwin"], E = arms["E_dosetwin_population_prior"];
-    const cA = comp("D_dosetwin", "A_standard", "tir_70_180");
-    const cB = comp("D_dosetwin", "B_standard+trend_alert", "tir_70_180");
-    const cBl = comp("D_dosetwin", "B_standard+trend_alert", "tbr_lt70");
+    const A = arms["A_standard"], B = arms["B_standard+trend_alert"], Dd = arms["D_dosetwin"], E = arms["E_dosetwin_population_prior"], F = arms["F_dosetwin_without_ehr_labs"], G = arms["G_dosetwin+bedtime_check"];
+    const FULL = "G_dosetwin+bedtime_check";
+    const cA = comp(FULL, "A_standard", "tir_70_180");
+    const cB = comp(FULL, "B_standard+trend_alert", "tir_70_180");
+    const cBl = comp(FULL, "B_standard+trend_alert", "tbr_lt70");
+    const cGD = comp(FULL, "D_dosetwin", "night_tbr_lt70");
+    const cDF = comp("D_dosetwin", "F_dosetwin_without_ehr_labs", "tbr_lt70");
+    const bed = Object.fromEntries(STUDY.bedtime_prediction.map((r) => [r.method, r]));
+    const bt = bed["dosetwin_bedtime"];
     const pfmt = (p) => p < 0.001 ? "p < 0.001" : "p = " + p.toFixed(2);
     const pct = (a, b) => Math.round((1 - b / a) * 100);
     const sign = (v, d = 1) => (v > 0 ? "+" : "") + v.toFixed(d);
-    $("#evLede").textContent = `30 virtual patients (10 children, 10 teens, 10 adults) in 3 fresh cohorts never used for tuning. Every arm replays the same 7 evaluation days with identical meals, carb-counting errors, walks and sensor noise. Differences are paired per patient, with 95% bootstrap intervals and Wilcoxon tests. "Threshold-alarm CGM" means alarms only after glucose is already low, as on the affordable sensors most people in India use; "predictive-alert CGM" adds a 30-minute trend warning, as on premium sensors.`;
+    $("#evLede").textContent = `Insulin-treated diabetes, validated on type 1. 30 virtual patients (10 children, 10 teens, 10 adults) in 3 fresh cohorts never used for tuning. Every arm replays the same 7 evaluation days with identical meals, carb-counting errors, exercise, sleep and sensor noise. Differences are paired per patient, with 95% bootstrap intervals and Wilcoxon tests. "Threshold-alarm CGM" alarms only after glucose is already low, as on the affordable sensors most people in India use; "predictive-alert CGM" adds a 30-minute trend warning, as on premium sensors.`;
     $("#evHead").innerHTML = [
-      [`−${pct(A.tbr_lt70, Dd.tbr_lt70)}%`, `Time below 70 mg/dL vs a threshold-alarm CGM with a bolus calculator (${fmt(A.tbr_lt70, 2)}% → ${fmt(Dd.tbr_lt70, 2)}%)`],
-      [`−${pct(A.night_tbr_lt70, Dd.night_tbr_lt70)}%`, `Night-time (00:00–07:00) below 70 vs the same comparator (${fmt(A.night_tbr_lt70, 1)}% → ${fmt(Dd.night_tbr_lt70, 1)}%)`],
-      [`${sign(cA.diff)} pts`, `Time in range vs the same comparator (95% CI ${sign(cA.ci_low)} to ${sign(cA.ci_high)}; ${pfmt(cA.wilcoxon_p)})`],
-      [`${sign(cB.diff)} pts`, `Time in range vs a predictive-alert CGM (95% CI ${sign(cB.ci_low)} to ${sign(cB.ci_high)}; ${pfmt(cB.wilcoxon_p)}). Time below 70 no different (${sign(cBl.diff, 2)} pts).`],
+      [`${fmt(bt.auroc, 2)}`, `AUROC for predicting tonight's low at 23:00 (95% CI ${fmt(bt.auroc_ci_low, 2)}–${fmt(bt.auroc_ci_high, 2)}), vs ${fmt(bed.lightgbm_night.auroc, 2)} for a LightGBM night classifier and ${fmt(bed.bedtime_glucose_rule.auroc, 2)} for the bedtime-glucose rule. Caught ${fmt(bt.sensitivity * 100)}% of night lows, a median ${fmt(bt.median_warning_h, 1)} h before they began.`],
+      [`−${pct(A.night_tbr_lt70, G.night_tbr_lt70)}%`, `Night-time (00:00–07:00) below 70 vs a threshold-alarm CGM with a bolus calculator (${fmt(A.night_tbr_lt70, 1)}% → ${fmt(G.night_tbr_lt70, 1)}%). Time below 70 overall ${fmt(A.tbr_lt70, 2)}% → ${fmt(G.tbr_lt70, 2)}%; time in range ${sign(cA.diff)} pts (${pfmt(cA.wilcoxon_p)}).`],
+      [`−${pct(Dd.night_tbr_lt70, G.night_tbr_lt70)}%`, `Night-time below 70 from adding the bedtime check alone (${fmt(Dd.night_tbr_lt70, 2)}% → ${fmt(G.night_tbr_lt70, 2)}%, ${pfmt(cGD.wilcoxon_p)}), for ${fmt(G.bedtime_snacks_per_week, 1)} suggested snacks per week.`],
+      [`−${pct(F.tbr_lt70, Dd.tbr_lt70)}%`, `Time below 70 when the twin uses HbA1c, eGFR and severe-hypo history, vs the same twin refitted without them (${fmt(F.tbr_lt70, 2)}% → ${fmt(Dd.tbr_lt70, 2)}%, ${pfmt(cDF.wilcoxon_p)}).`],
     ].map(([v, l]) => `<div class="card"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
-    const rows = [["A_standard", "Threshold-alarm CGM + bolus calculator"], ["B_standard+trend_alert", "Predictive-alert CGM + bolus calculator"], ["C_twin_dose+trend_alert", "Predictive-alert CGM + twin dosing"], ["E_dosetwin_population_prior", "DoseTwin, unpersonalised twin"], ["D_dosetwin", "DoseTwin (personal twin dosing + twin alerts)"]];
-    $("#armTable").innerHTML = `<thead><tr><th>Arm</th><th>TIR 70–180 %</th><th>&lt;70 %</th><th>&lt;54 %</th><th>&gt;250 %</th><th>Night &lt;70 %</th><th>Alerts/day</th><th>Rescue carbs g/day</th></tr></thead><tbody>` +
-      rows.map(([k, n]) => { const a = arms[k]; return `<tr class="${k === "D_dosetwin" ? "ours" : ""}"><td>${n}</td><td>${fmt(a.tir_70_180, 1)}</td><td>${fmt(a.tbr_lt70, 2)}</td><td>${fmt(a.tbr_lt54, 2)}</td><td>${fmt(a.tar_gt250, 2)}</td><td>${fmt(a.night_tbr_lt70, 2)}</td><td>${fmt(a.alerts_per_day, 1)}</td><td>${fmt(a.rescue_carbs_per_day, 0)}</td></tr>`; }).join("") + `</tbody>`;
-    // forecast chart + alert chart
+    const rows = [["A_standard", "Threshold-alarm CGM + bolus calculator"], ["B_standard+trend_alert", "Predictive-alert CGM + bolus calculator"], ["C_twin_dose+trend_alert", "Predictive-alert CGM + twin dosing"], ["E_dosetwin_population_prior", "DoseTwin, unpersonalised twin"], ["F_dosetwin_without_ehr_labs", "DoseTwin without HbA1c, eGFR, hypo history"], ["D_dosetwin", "DoseTwin without bedtime check"], [FULL, "DoseTwin (dosing + alerts + bedtime check)"]];
+    $("#armTable").innerHTML = `<thead><tr><th>Arm</th><th>TIR 70–180 %</th><th>&lt;70 %</th><th>&lt;54 %</th><th>&gt;250 %</th><th>Night &lt;70 %</th><th>Night lows per 6 nights</th><th>Alerts/day</th><th>Bedtime snacks / week</th><th>Rescue carbs g/day</th></tr></thead><tbody>` +
+      rows.map(([k, n]) => { const a = arms[k]; return `<tr class="${k === FULL ? "ours" : ""}"><td>${n}</td><td>${fmt(a.tir_70_180, 1)}</td><td>${fmt(a.tbr_lt70, 2)}</td><td>${fmt(a.tbr_lt54, 2)}</td><td>${fmt(a.tar_gt250, 2)}</td><td>${fmt(a.night_tbr_lt70, 2)}</td><td>${fmt(a.night_events, 2)}</td><td>${fmt(a.alerts_per_day, 1)}</td><td>${fmt(a.bedtime_snacks_per_week, 1)}</td><td>${fmt(a.rescue_carbs_per_day, 0)}</td></tr>`; }).join("") + `</tbody>`;
+    const bar = (label, v, max, ours, txt) => `<span>${label}</span><div class="bar"><span style="width:${Math.max(0, v) / max * 100}%;background:${ours ? "var(--accent)" : "var(--standard)"}"></span></div><span></span><span class="num ${ours ? "" : "muted"}">${txt}</span>`;
+    const bnames = { bedtime_glucose_rule: "Bedtime-glucose rule", lightgbm_night: "LightGBM night classifier", dosetwin_bedtime_without_ehr_labs: "Twin without record labs", dosetwin_bedtime_without_hr_sleep: "Twin without heart rate and sleep", dosetwin_bedtime: "DoseTwin bedtime check" };
+    const bbars = Object.keys(bnames).map((k) => { const r = bed[k]; return bar(bnames[k], r.auroc - 0.5, 0.5, k === "dosetwin_bedtime", `AUROC ${fmt(r.auroc, 2)}${r.sensitivity != null ? ` · ${fmt(r.sensitivity * 100)}% caught` : ""}`); }).join("");
     const fc = STUDY.forecast_rmse.filter((r) => r.horizon === 60);
-    const fnames = { persistence: "CGM stays flat", cgm_trend: "CGM trend line", lightgbm: "LightGBM (trained on 30 patients)", population_twin: "Population twin", personal_twin: "Personal twin" };
-    const fmax = Math.max(...fc.map((r) => r.rmse));
-    const fbars = ["persistence", "cgm_trend", "lightgbm", "population_twin", "personal_twin"].map((k) => { const r = fc.find((x) => x.method === k); return r ? `<span>${fnames[k]}</span><div class="bar"><span style="width:${r.rmse / fmax * 100}%;background:${k === "personal_twin" ? "var(--accent)" : "var(--standard)"}"></span></div><span></span><span class="num ${k === "personal_twin" ? "" : "muted"}">${fmt(r.rmse, 1)} mg/dL</span>` : ""; }).join("");
+    const fnames = { persistence: "CGM stays flat", cgm_trend: "CGM trend line", lightgbm: "LightGBM (trained on 30 patients)", personal_twin: "Personal twin" };
+    const fmax = Math.max(...fc.filter((r) => fnames[r.method]).map((r) => r.rmse));
+    const fbars = Object.keys(fnames).map((k) => { const r = fc.find((x) => x.method === k); return bar(fnames[k], r.rmse, fmax, k === "personal_twin", `${fmt(r.rmse, 1)} (low: ${fmt(r.rmse_low, 1)}) mg/dL`); }).join("");
     const al = STUDY.alerts_at_matched_false_alarm.filter((r) => r.budget_false_per_day === 2);
     const anames = { cgm_trend_30: "CGM trend line (30 min)", lightgbm: "LightGBM classifier", twin_40: "Twin forecast alone", dosetwin_hybrid: "DoseTwin hybrid" };
-    const abars = ["cgm_trend_30", "lightgbm", "twin_40", "dosetwin_hybrid"].map((k) => { const r = al.find((x) => x.method === k); return r ? `<span>${anames[k]}</span><div class="bar"><span style="width:${r.sensitivity * 100}%;background:${k === "dosetwin_hybrid" ? "var(--accent)" : "var(--standard)"}"></span></div><span></span><span class="num ${k === "dosetwin_hybrid" ? "" : "muted"}">${fmt(r.sensitivity * 100)}% caught · ${fmt(r.median_lead_min)} min warning</span>` : ""; }).join("");
-    $("#evCharts").innerHTML = `<div class="card"><span class="eyebrow">Forecast error at 60 min (RMSE vs true glucose)</span><div class="cmp">${fbars}</div></div>
-      <div class="card"><span class="eyebrow">Lows caught at ≤ 2 false alerts per day</span><div class="cmp">${abars}</div></div>`;
+    const abars = Object.keys(anames).map((k) => { const r = al.find((x) => x.method === k); return r ? bar(anames[k], r.sensitivity, 1, k === "dosetwin_hybrid", `${fmt(r.sensitivity * 100)}% · ${fmt(r.median_lead_min)} min`) : ""; }).join("");
+    const sg = STUDY.glycemic_by_arm_subgroup, hs = Object.fromEntries(sg.severe_hypo_history.map((r) => [r.arm, r])), ek = Object.fromEntries(sg.egfr_below_60.map((r) => [r.arm, r]));
+    const xmax = Math.max(F.tbr_lt70, hs.F_dosetwin_without_ehr_labs.tbr_lt70, ek.F_dosetwin_without_ehr_labs.tbr_lt70);
+    const ebars = [["All patients", F, Dd], [`History of severe hypo (n = ${sg.n_patient_weeks.severe_hypo_history})`, hs.F_dosetwin_without_ehr_labs, hs.D_dosetwin], [`eGFR < 60 (n = ${sg.n_patient_weeks.egfr_below_60})`, ek.F_dosetwin_without_ehr_labs, ek.D_dosetwin]]
+      .map(([n, f, d]) => bar(n + ", without", f.tbr_lt70, xmax, false, `${fmt(f.tbr_lt70, 2)}%`) + bar(n + ", with", d.tbr_lt70, xmax, true, `${fmt(d.tbr_lt70, 2)}%`)).join("");
+    $("#evCharts").innerHTML = `<div class="card"><span class="eyebrow">Tonight's low, predicted at 23:00 · ${bt.nights} nights, ${bt.nights_with_low} with a low</span><div class="cmp">${bbars}</div><p class="note">Bar length is AUROC above chance. "Caught" uses thresholds frozen on the development cohort at 80% specificity.</p></div>
+      <div class="card"><span class="eyebrow">Health-record fields switched off · time below 70 mg/dL</span><div class="cmp">${ebars}</div><p class="note">Same twin refitted without HbA1c, eGFR and the severe-hypo diagnosis. Subgroups are small; the overall difference is ${fmt(cDF.diff, 2)} pts (95% CI ${fmt(cDF.ci_low, 2)} to ${fmt(cDF.ci_high, 2)}).</p></div>
+      <div class="card"><span class="eyebrow">Forecast error at 60 min (RMSE vs true glucose)</span><div class="cmp">${fbars}</div></div>
+      <div class="card"><span class="eyebrow">Lows caught at ≤ 2 false alerts per day · warning time</span><div class="cmp">${abars}</div></div>`;
     const s = STUDY.settings_recovery;
+    const f60 = (m) => STUDY.forecast_rmse.find((r) => r.method === m && r.horizon === 60);
     $("#limits").innerHTML = [
-      `All patients are virtual. The hidden physiology is the published UVA/Padova model, and behaviour (meals, carb-counting errors, walks) is simulated. Real-patient validation is the next step.`,
-      `The virtual cohort is easier to control than real life: under standard care its time in range is about 76%, higher than typically reported for people on insulin pens.`,
-      `Against a predictive-alert CGM, the dosing gain is small and not statistically significant (+${cB.diff.toFixed(1)} points). In this cohort even perfect bolus adherence would add only about 2 points, so meal-time dosing has little room left. Most of DoseTwin's measured benefit comes from earlier low warnings.`,
-      `Adding the HbA1c lab to the record made even the unpersonalised twin fairly safe. Personalising it on the patient's own data mainly cuts alarm burden: ${fmt(Dd.alerts_per_day, 1)} vs ${fmt(E.alerts_per_day, 1)} alerts per day and ${fmt(Dd.rescue_carbs_per_day, 0)} vs ${fmt(E.rescue_carbs_per_day, 0)} g of rescue carbs per day. The unpersonalised twin reached higher time in range (${fmt(E.tir_70_180, 1)}% vs ${fmt(Dd.tir_70_180, 1)}%) by dosing more and relying on those extra alerts and carbs.`,
-      `Twin-suggested settings can be badly wrong for some patients (for example a basal of 0 U). The clinician view therefore caps each change at 20% per review and flags low confidence when the twin and the record disagree more than twofold.`,
-      `The twin's carb ratio was closer to the truth than the clinic's in ${fmt(s.cr_twin_closer_fraction * 100)}% of patient-weeks (median error ${fmt(s.cr_median_abs_pct_error_twin)}% vs ${fmt(s.cr_median_abs_pct_error_prescribed)}%). For some patients it was clearly worse, so settings changes must stay clinician-reviewed.`,
-      `Long-acting insulin is modelled as a flat infusion, there is no exercise beyond walking, and the twin needs logged meals. Missed or wrong logs reduce accuracy.`,
+      `All patients are virtual. The hidden physiology is the published UVA/Padova type 1 model, extended with sleep, kidney-function and hypoglycaemia-awareness effects; behaviour is simulated. Validation on type 2 diabetes treated with insulin, and on real patients, is the next step.`,
+      `The bedtime check warns at 23:00, a median ${fmt(bt.median_warning_h, 1)} h before the low starts (middle half ${fmt(bt.iqr_warning_h[0], 1)}–${fmt(bt.iqr_warning_h[1], 1)} h). Most lows in this cohort begin early in the night, so a 4–7 hour warning is not what we measured. At its frozen threshold it also flags ${fmt((1 - bt.specificity) * 100)}% of nights that stay safe.`,
+      `Heart rate and sleep did not measurably help. The twin recovered each patient's sleep sensitivity only weakly (rank correlation ${fmt(s.beta_sleep_vs_true_spearman, 2)}), the bedtime AUROC was the same without them (${fmt(bed.dosetwin_bedtime_without_hr_sleep.auroc, 2)}), and 60-minute error after exercise the step counter misses fell only from ${fmt(f60("personal_twin_without_hr_sleep").rmse_after_hr_only_exercise, 1)} to ${fmt(f60("personal_twin").rmse_after_hr_only_exercise, 1)} mg/dL.`,
+      `Against a predictive-alert CGM, gains are small and not statistically significant at 0.05: time in range ${sign(cB.diff)} pts (${pfmt(cB.wilcoxon_p)}), time below 70 ${sign(cBl.diff, 2)} pts (${pfmt(cBl.wilcoxon_p)}).`,
+      `The health-record fields make the twin more cautious: it gives up ${fmt(F.tir_70_180 - Dd.tir_70_180, 1)} points of time in range to cut lows. The unpersonalised twin reached higher time in range (${fmt(E.tir_70_180, 1)}%) by dosing more and relying on ${fmt(E.alerts_per_day, 1)} alerts and ${fmt(E.rescue_carbs_per_day, 0)} g of rescue carbs per day.`,
+      `Twin-estimated settings are not better than the clinic's on average: carb ratio closer to the truth in ${fmt(s.cr_twin_closer_fraction * 100)}% of patient-weeks, correction factor in ${fmt(s.cf_twin_closer_fraction * 100)}%. The clinician view therefore caps each change at 20% per review and flags low confidence.`,
+      `Long-acting insulin is modelled as a flat infusion, and the twin needs logged meals. Missed or wrong logs reduce accuracy.`,
       `Featured patients and meals on this page are illustrative; the table and charts above are cohort-wide.`,
     ].map((t) => `<li>${t}</li>`).join("");
   }
@@ -519,7 +534,7 @@ const CLINIC = /*CLINIC*/;
   const hh = (m) => String(Math.floor(m / 60) % 24).padStart(2, "0") + ":00";
   const STEP = 0.2; // guardrail: change at most 20% per review
   const label = (id) => ({ child: "Child", adolescent: "Teen", adult: "Adult" })[id.split("#")[0]];
-  const risk = (p) => p.week.tbr * 2 + p.week.night_tbr + (100 - p.week.tir) / 10;
+  const risk = (p) => p.week.tbr * 2 + p.week.night_tbr + (100 - p.week.tir) / 10 + (p.tonight.flag ? 12 : 0);
   const pts = CLINIC.patients.slice().sort((a, b) => risk(b) - risk(a));
   let P = null, trial = null;
 
@@ -547,7 +562,7 @@ const CLINIC = /*CLINIC*/;
       }
       if (g < 70 && k - lastRescue >= 20) { c += 15; lastRescue = k; }
       if (k % 5 === 0) out.push(g);
-      DoseTwinModel.step(z, th, u + extra, b0, c, (p.day.steps[Math.floor(k / 5)] || 0) / 5, t.W, p.day.index * 1440 - 1440 + k, true);
+      DoseTwinModel.step(z, th, u + extra, b0, c, (p.day.steps[Math.floor(k / 5)] || 0) / 5, p.day.sleep_debt || 0, t.W, p.day.index * 1440 - 1440 + k, true);
     }
     const a = out.filter((v) => v != null);
     return { g: out, tir: a.filter((v) => v >= 70 && v <= 180).length / a.length * 100, tbr: a.filter((v) => v < 70).length / a.length * 100, min: Math.min(...a) };
@@ -571,6 +586,27 @@ const CLINIC = /*CLINIC*/;
     const band = (lo, hi, op) => { let d = ""; lo.forEach((v, k) => d += `${k ? "L" : "M"}${X(k * 30 + 15)},${Y(hi[k])}`); for (let k = lo.length - 1; k >= 0; k--) d += `L${X(k * 30 + 15)},${Y(lo[k])}`; el("path", { d: d + "Z", fill: "var(--accent)", opacity: op }, svg); };
     band(a[10], a[90], .12); band(a[25], a[75], .22);
     el("path", { d: a[50].map((v, k) => `${k ? "L" : "M"}${X(k * 30 + 15)},${Y(v)}`).join(""), fill: "none", stroke: "var(--accent)", "stroke-width": 2.2 }, svg);
+  }
+
+  function drawNight() {
+    const svg = $("#night"); svg.innerHTML = "";
+    const n = P.tonight, w = 640, h = 200, pad = { l: 36, r: 10, t: 10, b: 24 };
+    const y1 = Math.min(400, Math.max(250, Math.ceil(Math.max(...n.nominal, ...n.pessimistic) / 50) * 50));
+    const X = (k) => pad.l + k / (n.nominal.length - 1) * (w - pad.l - pad.r);
+    const Y = (v) => pad.t + (1 - (Math.min(y1, Math.max(40, v)) - 40) / (y1 - 40)) * (h - pad.t - pad.b);
+    el("rect", { x: pad.l, y: Y(180), width: w - pad.l - pad.r, height: Y(70) - Y(180), fill: "var(--inrange-band)" }, svg);
+    const yt = [40, 70, 180]; for (let v = 250; v <= y1; v += 50) yt.push(v);
+    for (const v of yt) { el("line", { x1: pad.l, x2: w - pad.r, y1: Y(v), y2: Y(v), stroke: "var(--line)", "stroke-width": (v === 70 || v === 180) ? 1.2 : .6 }, svg); const tx = el("text", { x: pad.l - 6, y: Y(v) + 4, "text-anchor": "end" }, svg); tx.textContent = v; }
+    for (let hr = 0; hr <= 8; hr += 2) { const tx = el("text", { x: X(hr * 12), y: h - 6, "text-anchor": hr === 8 ? "end" : hr === 0 ? "start" : "middle" }, svg); tx.textContent = String((23 + hr) % 24).padStart(2, "0") + ":00"; }
+    el("line", { x1: pad.l, x2: w - pad.r, y1: Y(n.threshold), y2: Y(n.threshold), stroke: "var(--low)", "stroke-width": 1, "stroke-dasharray": "4 4", opacity: .5 }, svg);
+    const ln = (a) => a.map((v, k) => `${k ? "L" : "M"}${X(k).toFixed(1)},${Y(v).toFixed(1)}`).join("");
+    el("path", { d: ln(n.pessimistic), fill: "none", stroke: "var(--low)", "stroke-width": 1.6, "stroke-dasharray": "5 4" }, svg);
+    el("path", { d: ln(n.nominal), fill: "none", stroke: "var(--accent)", "stroke-width": 2.4 }, svg);
+    const kmin = n.pessimistic.indexOf(Math.min(...n.pessimistic));
+    const when = String(Math.floor((23 * 60 + kmin * 5) / 60) % 24).padStart(2, "0") + ":" + String((kmin * 5) % 60).padStart(2, "0");
+    $("#nightText").innerHTML = n.flag
+      ? `<b style="color:var(--low)">Low likely tonight.</b> The pessimistic forecast reaches ${fmt(n.min_pessimistic)} mg/dL around ${when}, ${fmt(kmin * 5 / 60, 1)} h after bedtime (alert line ${fmt(n.threshold)} mg/dL). The twin suggests a <b>${fmt(n.snack_g)} g</b> bedtime snack, the smallest that keeps its pessimistic night above 80 mg/dL.`
+      : `<b>Low unlikely tonight.</b> Lowest forecast ${fmt(n.min_nominal)} mg/dL (pessimistic ${fmt(n.min_pessimistic)} mg/dL), above the alert line of ${fmt(n.threshold)} mg/dL.`;
   }
 
   function drawReplay() {
@@ -605,7 +641,7 @@ const CLINIC = /*CLINIC*/;
     const sg = (cur, s, unit, dec) => s.lowConf ? `<td class="muted">${fmt(cur, dec)} ${unit}<br><span class="chip warn">Low confidence: keep</span></td>` : `<td><b>${fmt(s.value, dec)} ${unit}</b>${Math.abs(s.value / cur - 1) < 0.02 ? "" : `<br><span class="chip">${s.value > cur ? "+" : "−"}${fmt(Math.abs(s.value / cur - 1) * 100)}%</span>`}</td>`;
     $("#pdetail").innerHTML = `
       <div class="phead"><h3>${label(P.id)}, ${d.age} y, ${d.sex}</h3><span class="muted">${P.id} · ${d.state} · T1D for ${dur} y · BMI ${d.bmi}</span>
-        <span class="chip">HbA1c ${L.hba1c_pct}%</span>${flags.map(() => `<span class="chip bad">Severe hypo in last 12 months</span>`).join("")}</div>
+        <span class="chip">HbA1c ${L.hba1c_pct}%</span>${L.egfr_ml_min < 60 ? `<span class="chip warn">eGFR ${L.egfr_ml_min}: insulin clears slowly</span>` : ""}${flags.map(() => `<span class="chip bad">Severe hypo in last 12 months</span>`).join("")}</div>
       <div class="kpis">
         ${kpi(fmt(wk.tir) + "%", "Time in range 70–180", wk.tir < 70, "&gt;70%")}
         ${kpi(fmt(wk.tbr, 1) + "%", "Below 70", wk.tbr >= 4, "&lt;4%")}
@@ -622,7 +658,8 @@ const CLINIC = /*CLINIC*/;
           <div><h4>Labs</h4><dl class="kv"><dt>HbA1c</dt><dd>${L.hba1c_pct}%</dd><dt>Fasting C-peptide</dt><dd>${L.fasting_c_peptide_nmol_l} nmol/L</dd><dt>eGFR</dt><dd>${L.egfr_ml_min} mL/min</dd><dt>TSH</dt><dd>${L.tsh_miu_l} mIU/L</dd><dt>LDL</dt><dd>${L.ldl_mg_dl} mg/dL</dd><dt>Urine ACR</dt><dd>${L.urine_acr_mg_g} mg/g</dd></dl></div>
           <div><h4>Genetics</h4><dl class="kv"><dt>HLA-DR</dt><dd>${r.genetics.hla_dr_genotype}</dd><dt>GAD65 at diagnosis</dt><dd>${r.genetics.gad65_antibody_at_diagnosis}</dd></dl></div>
           <div><h4>Medications</h4><ul>${r.medications.map((m) => `<li>${m.drug}: ${m.dose}</li>`).join("")}</ul></div>
-          <p class="note">Synthetic record. The twin uses weight, insulin prescriptions and HbA1c; the rest is context for the clinician.</p>
+          <div><h4>Wearables, last 7 days</h4><dl class="kv"><dt>Sleep, average</dt><dd>${fmt(P.wearables.sleep_mean_h, 1)} h</dd><dt>Nights under 6 h</dt><dd>${P.wearables.short_nights}</dd><dt>Sleep debt going into tonight</dt><dd>${fmt(P.wearables.sleep_debt_tonight_h, 1)} h</dd><dt>Resting heart rate</dt><dd>${P.wearables.resting_hr} bpm</dd><dt>Days with exercise seen only by heart rate</dt><dd>${P.wearables.hr_only_exercise_days}</dd></dl></div>
+          <p class="note">Synthetic record. The twin uses weight, insulin prescriptions, HbA1c, eGFR (slower insulin clearance) and the severe-hypo history (higher safety floor, earlier alerts); the rest is context for the clinician.</p>
         </div>
         <div class="trial">
           <span class="eyebrow">Settings review</span>
@@ -640,6 +677,10 @@ const CLINIC = /*CLINIC*/;
           <p class="note" id="okNote" hidden>Approved in this demo only. In practice the change goes to the patient's app for confirmation and the twin keeps watching the next week.</p>
         </div>
       </div>
+      <div><span class="eyebrow">Tonight · bedtime check at 23:00 (end of day 7)</span>
+        <div class="chartbox"><svg class="chart" id="night" viewBox="0 0 640 200" role="img" aria-label="Twin forecast for tonight"></svg></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Twin forecast</span><span><i style="background:var(--low)"></i>Pessimistic forecast (insulin 25% stronger)</span><span><i style="background:var(--low);opacity:.4"></i>Alert line</span></div>
+        <p id="nightText" style="font-size:.9rem;margin-top:6px"></p></div>
       <div><span class="eyebrow">Virtual patient replays day ${P.day.index} under the trial settings</span>
         <div class="chartbox"><svg class="chart" id="replay" viewBox="0 0 640 220" role="img" aria-label="Twin replay of one recorded day"></svg></div>
         <div class="legend"><span><i style="background:var(--standard)"></i>Current settings</span><span><i style="background:var(--accent)"></i>Trial settings</span><span><i style="background:var(--high)"></i>Logged meal</span></div>
@@ -647,9 +688,9 @@ const CLINIC = /*CLINIC*/;
         <p class="note">Same meals, carb counts and steps as the recorded day; doses recomputed with the trial settings. This is the twin's prediction, not a measurement.</p></div>`;
     const pd = $("#pdetail"), lc = document.createElement("div");
     lc.className = "leftcol";
-    const agpBox = pd.children[2], replayBox = pd.children[4];
-    pd.insertBefore(lc, agpBox); lc.append(agpBox, replayBox);
-    drawAGP();
+    const agpBox = pd.children[2], nightBox = pd.children[4], replayBox = pd.children[5];
+    pd.insertBefore(lc, agpBox); lc.append(agpBox, nightBox, replayBox);
+    drawAGP(); drawNight();
     const upd = () => setTrial(+$("#trCr").value, +$("#trCf").value, +$("#trBa").value);
     ["#trCr", "#trCf", "#trBa"].forEach((q) => $(q).addEventListener("input", upd));
     $("#bSug").addEventListener("click", () => setTrial(sCr.value, sCf.value, sBa.value));
@@ -660,7 +701,7 @@ const CLINIC = /*CLINIC*/;
 
   $("#plist").insertAdjacentHTML("beforeend", pts.map((p) => {
     const d = p.ehr.demographics, w = p.week;
-    return `<button class="prow" data-id="${p.id}" aria-current="false"><span class="who">${label(p.id)}, ${d.age} y, ${d.sex[0].toUpperCase()}</span><span class="chip ${w.tbr >= 4 ? "bad" : ""}">&lt;70 ${fmt(w.tbr, 1)}%</span><span class="sub">${p.id} · HbA1c ${p.ehr.labs.hba1c_pct}%</span><span class="chip ${w.tir < 70 ? "warn" : "good"}">TIR ${fmt(w.tir)}%</span></button>`;
+    return `<button class="prow" data-id="${p.id}" aria-current="false"><span class="who">${label(p.id)}, ${d.age} y, ${d.sex[0].toUpperCase()}</span><span class="chip ${w.tbr >= 4 ? "bad" : ""}">&lt;70 ${fmt(w.tbr, 1)}%</span><span class="sub">${p.id} · HbA1c ${p.ehr.labs.hba1c_pct}%</span><span class="chip ${w.tir < 70 ? "warn" : "good"}">TIR ${fmt(w.tir)}%</span>${p.tonight.flag ? `<span class="sub" style="color:var(--low);font-weight:600">Low likely tonight</span><span></span>` : ""}</button>`;
   }).join(""));
   document.querySelectorAll(".prow").forEach((b) => b.addEventListener("click", () => select(b.dataset.id)));
   select(pts[0].id);
