@@ -1,247 +1,280 @@
 <title>DoseTwin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: an instrument panel. Live dose simulator first, then what the twin learned, one real day, and the evidence. */
+/* Layout: a full-width clinical workstation. App bar with view tabs; every view is a set of square, bordered panels with title strips. Light theme only. */
 :root {
-  --bg: #f5f7f9; --panel: #ffffff; --ink: #14202b; --muted: #5a6b79; --line: #dbe2e8;
-  --accent: #1f4fd1; --accent-soft: #e6ecfb;
-  --inrange: #2f9e5a; --inrange-band: rgba(47,158,90,.10); --low: #d23a3a; --low-soft: #fbe9e9;
-  --high: #d98a14; --standard: #8794a1;
-  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --bg: #eef1f4; --panel: #ffffff; --ink: #0f1b2a; --muted: #586474; --line: #d5dbe2; --line-strong: #b9c2cc;
+  --accent: #0b5cad; --accent-ink: #ffffff; --accent-soft: #e7eff8;
+  --inrange: #1a7a48; --inrange-band: rgba(26,122,72,.08); --low: #b8322a; --low-soft: #fbeceb; --high: #b06d12; --standard: #8a94a2;
+  --f-body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --f-display: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0e151c; --panel: #151f29; --ink: #e6edf3; --muted: #93a4b3; --line: #263442;
-  --accent: #7ea2ff; --accent-soft: #1b2a4a; --inrange: #4cc27b; --inrange-band: rgba(76,194,123,.10);
-  --low: #ff6b6b; --low-soft: #3a1c1f; --high: #f0a73a; --standard: #7d8b98; color-scheme: dark; } }
-:root[data-theme="dark"] {
-  --bg: #0e151c; --panel: #151f29; --ink: #e6edf3; --muted: #93a4b3; --line: #263442;
-  --accent: #7ea2ff; --accent-soft: #1b2a4a; --inrange: #4cc27b; --inrange-band: rgba(76,194,123,.10);
-  --low: #ff6b6b; --low-soft: #3a1c1f; --high: #f0a73a; --standard: #7d8b98; color-scheme: dark; }
-* { box-sizing: border-box; }
+* { box-sizing: border-box; border-radius: 0 !important; }
 [hidden] { display: none !important; }
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; margin: 0; }
-.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 0 64px; }
-h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
-h1 { font-size: clamp(1.9rem, 4.2vw, 2.9rem); line-height: 1.08; font-weight: 700; }
-h2 { font-size: 1.45rem; font-weight: 700; }
-h3 { font-size: 1.02rem; font-weight: 600; font-family: var(--f-body); }
+html, body { background: var(--bg); }
+body { color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.5; margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 1.05rem; } h3 { font-size: .95rem; }
 p { margin: 0; }
 .muted { color: var(--muted); }
 .num, .mono { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
-.eyebrow { font-size: .74rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 18px; border-bottom: 1px solid var(--line); }
-.mark { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; }
-.mark svg { width: 26px; height: 26px; }
-.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--panel); }
-.hero { display: grid; gap: 14px; padding-block: 34px 22px; max-width: 760px; }
-.hero p { font-size: 1.06rem; color: var(--muted); max-width: 64ch; }
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-block: 6px 16px; }
-.tab { font: inherit; font-size: .9rem; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
-.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
-.tab:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.sim { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.sim > * { min-width: 0; }
-.side { padding: 20px; border-right: 1px solid var(--line); display: grid; gap: 16px; align-content: start; }
-.main { padding: 20px; display: grid; gap: 14px; }
-.kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: .9rem; }
+.eyebrow { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+button, input { font: inherit; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* app bar */
+.appbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: stretch; gap: 0; background: var(--panel); border-bottom: 1px solid var(--line-strong); padding-inline: 16px; min-height: 48px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; padding-right: 20px; margin-right: 8px; border-right: 1px solid var(--line); }
+.brand .logo { width: 22px; height: 22px; background: var(--accent); display: grid; place-items: center; color: #fff; font-family: var(--f-data); font-size: 12px; font-weight: 500; }
+.brand b { font-size: .98rem; letter-spacing: .01em; }
+.brand span { color: var(--muted); font-size: .78rem; }
+.views { display: flex; align-items: stretch; flex-wrap: wrap; }
+.vtab { border: 0; background: transparent; color: var(--muted); padding: 0 16px; cursor: pointer; font-weight: 500; border-bottom: 2px solid transparent; min-height: 47px; }
+.vtab:hover { color: var(--ink); background: #f6f8fa; }
+.vtab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.bar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.tag { font-size: .72rem; padding: 3px 8px; border: 1px solid var(--line-strong); color: var(--muted); background: #f7f9fb; white-space: nowrap; }
+
+/* page */
+.page { padding-inline: 16px; padding-block: 16px 32px; display: grid; gap: 16px; width: 100%; }
+.viewhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.viewhead h1 { font-size: 1.25rem; }
+.viewhead p { color: var(--muted); max-width: 90ch; }
+.panel { background: var(--panel); border: 1px solid var(--line); min-width: 0; }
+.ptitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: #f7f9fb; font-size: .74rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.pbody { padding: 14px; display: grid; gap: 12px; }
+.lede { color: var(--muted); max-width: 95ch; }
+
+/* shared bits */
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: .86rem; margin: 0; }
 .kv dt { color: var(--muted); } .kv dd { margin: 0; text-align: right; font-family: var(--f-data); }
-.dose { display: grid; gap: 10px; }
-.dosebig { font-family: var(--f-display); font-size: 2.6rem; font-weight: 700; line-height: 1; }
-.dosebig small { font-size: 1rem; font-weight: 500; color: var(--muted); }
-input[type=range] { width: 100%; accent-color: var(--accent); }
-.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.choice { font: inherit; text-align: left; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; display: grid; gap: 2px; }
-.choice b { font-family: var(--f-data); font-size: 1.05rem; }
-.choice span { font-size: .75rem; color: var(--muted); }
-.choice.twin { border-color: var(--accent); background: var(--accent-soft); }
-.readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.stat { padding: 10px 12px; border-radius: 10px; background: var(--bg); display: grid; gap: 2px; }
-.stat .v { font-family: var(--f-data); font-size: 1.3rem; font-weight: 500; }
-.stat .l { font-size: .75rem; color: var(--muted); }
-.stat.bad { background: var(--low-soft); } .stat.bad .v { color: var(--low); }
+.chip { display: inline-flex; align-items: center; font-size: .72rem; font-family: var(--f-data); padding: 1px 6px; border: 1px solid var(--line); background: #f7f9fb; color: var(--muted); white-space: nowrap; }
+.chip.bad { background: var(--low-soft); color: var(--low); border-color: #efc9c5; } .chip.warn { color: var(--high); } .chip.good { color: var(--inrange); }
 .chartbox { width: 100%; overflow-x: auto; }
-svg.chart { width: 100%; height: auto; display: block; }
+svg.chart { width: 100%; height: auto; display: block; max-height: 420px; }
 svg text { fill: var(--muted); font-family: var(--f-data); font-size: 11px; }
-.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
-.legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
-.reveal { font: inherit; font-size: .88rem; padding: 8px 12px; border-radius: 8px; border: 1px dashed var(--line); background: transparent; color: var(--ink); cursor: pointer; justify-self: start; }
-.outcome { display: grid; gap: 8px; padding: 12px 14px; border-radius: 10px; background: var(--bg); font-size: .9rem; }
-section.block { display: grid; gap: 16px; padding-block: 44px 0; }
-.lede { color: var(--muted); max-width: 70ch; }
-.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
-.cmp { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center; font-size: .85rem; }
-.bar { height: 8px; border-radius: 4px; background: var(--line); position: relative; }
-.bar > span { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
-.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 640px; }
-th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .78rem; color: var(--muted); }
+.legend i { display: inline-block; width: 16px; height: 3px; vertical-align: middle; margin-right: 6px; }
+.btn, .reveal { padding: 6px 12px; border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink); cursor: pointer; font-size: .84rem; }
+.btn:hover, .reveal:hover { background: #f3f6f9; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.note { font-size: .78rem; color: var(--muted); }
+.reveal { justify-self: start; }
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+th, td { padding: 7px 12px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
-th { font-weight: 600; color: var(--muted); font-size: .78rem; }
+th { font-weight: 600; color: var(--muted); font-size: .74rem; background: #f7f9fb; }
 td { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
 td:first-child { font-family: var(--f-body); }
 tr.ours td { background: var(--accent-soft); font-weight: 500; }
-.headline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.headline .card .v { font-family: var(--f-display); font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
-.headline .card .l { font-size: .82rem; color: var(--muted); }
-.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; counter-reset: s; }
-.flow .card h3::before { counter-increment: s; content: counter(s) "  "; font-family: var(--f-data); color: var(--accent); }
-.limits { display: grid; gap: 8px; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-.limits ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
-footer { padding-block: 40px 0; color: var(--muted); font-size: .82rem; }
+.card { background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.headline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); background: var(--panel); }
+.headline .card { border: 0; border-right: 1px solid var(--line); }
+.headline .card:last-child { border-right: 0; }
+.headline .card .v { font-family: var(--f-data); font-size: 1.6rem; font-weight: 500; line-height: 1.15; color: var(--ink); }
+.headline .card .l { font-size: .8rem; color: var(--muted); }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cmp { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: center; font-size: .82rem; }
+.bar { height: 8px; background: #e9edf1; position: relative; }
+.bar > span { position: absolute; inset: 0 auto 0 0; }
 
 /* clinician view */
-.clinic { display: grid; grid-template-columns: minmax(0, 290px) minmax(0, 1fr); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.clinic { display: grid; grid-template-columns: 300px minmax(0, 1fr); border: 1px solid var(--line); background: var(--panel); min-height: 70vh; }
 .clinic > * { min-width: 0; }
-.plist { border-right: 1px solid var(--line); max-height: 1180px; overflow-y: auto; }
-.plist h3 { padding: 16px 16px 8px; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.prow { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; font: inherit; color: var(--ink); background: transparent; border: 0; border-top: 1px solid var(--line); padding: 10px 16px; cursor: pointer; }
+.plist { border-right: 1px solid var(--line); max-height: calc(100vh - 140px); overflow-y: auto; position: sticky; top: 49px; align-self: start; }
+.plist h3 { padding: 8px 14px; font-size: .72rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); background: #f7f9fb; border-bottom: 1px solid var(--line); position: sticky; top: 0; }
+.prow { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 8px 14px; cursor: pointer; }
+.prow:hover { background: #f6f8fa; }
 .prow[aria-current="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
-.prow .who { font-weight: 600; font-size: .9rem; } .prow .sub { font-size: .76rem; color: var(--muted); }
-.chip { display: inline-flex; align-items: center; gap: 4px; font-size: .74rem; font-family: var(--f-data); padding: 2px 8px; border-radius: 999px; background: var(--bg); color: var(--muted); white-space: nowrap; }
-.chip.bad { background: var(--low-soft); color: var(--low); } .chip.warn { color: var(--high); } .chip.good { color: var(--inrange); }
-.pdetail { padding: 20px; display: grid; gap: 18px; align-content: start; }
-.phead { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
-.phead h3 { font-family: var(--f-display); font-size: 1.35rem; }
-.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
-.kpi { background: var(--bg); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
-.kpi .v { font-family: var(--f-data); font-size: 1.1rem; } .kpi .l { font-size: .7rem; color: var(--muted); }
-.kpi .s { font-size: .7rem; } .kpi.bad .v { color: var(--low); }
-.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; }
-.ehr { display: grid; gap: 12px; font-size: .86rem; }
-.ehr h4 { margin: 0; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.prow .who { font-weight: 600; font-size: .86rem; } .prow .sub { font-size: .74rem; color: var(--muted); }
+.pdetail { padding: 16px; display: grid; gap: 16px; align-content: start; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+.pdetail > .phead, .pdetail > .kpis { grid-column: 1 / -1; }
+.pdetail > .leftcol { grid-column: 1; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.pdetail > .two { grid-column: 2; grid-template-columns: 1fr; align-content: start; }
+.phead { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.phead h3 { font-size: 1.15rem; }
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--line); }
+.kpi { padding: 8px 12px; display: grid; gap: 2px; border-right: 1px solid var(--line); }
+.kpi:last-child { border-right: 0; }
+.kpi .v { font-family: var(--f-data); font-size: 1.2rem; } .kpi .l { font-size: .72rem; color: var(--muted); } .kpi .s { font-size: .7rem; }
+.kpi.bad { box-shadow: inset 0 3px 0 var(--low); } .kpi.bad .v { color: var(--low); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.ehr { display: grid; gap: 12px; font-size: .84rem; border: 1px solid var(--line); padding: 12px; }
+.ehr h4 { margin: 0; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .ehr ul { margin: 4px 0 0; padding-left: 18px; }
-.settings { width: 100%; border-collapse: collapse; font-size: .84rem; min-width: 0; }
-.settings th, .settings td { padding: 6px 6px; border-bottom: 1px solid var(--line); text-align: right; white-space: normal; }
-.settings th:first-child, .settings td:first-child { text-align: left; }
-.trial { display: grid; gap: 10px; }
-.trial label { display: grid; grid-template-columns: 130px 1fr 92px; gap: 10px; align-items: center; font-size: .84rem; }
+.trial { display: grid; gap: 10px; border: 1px solid var(--line); padding: 12px; }
+.trial .tablewrap { border: 0; }
+.settings th, .settings td { padding: 6px 6px; white-space: normal; }
+.trial label { display: grid; grid-template-columns: 96px 1fr 90px; gap: 10px; align-items: center; font-size: .82rem; }
 .trial output { font-family: var(--f-data); text-align: right; }
-.btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn { font: inherit; font-size: .84rem; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.note { font-size: .8rem; color: var(--muted); }
-@media (max-width: 860px) { .clinic { grid-template-columns: 1fr; } .plist { max-height: 260px; border-right: 0; border-bottom: 1px solid var(--line); } .two { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+input[type=range] { width: 100%; accent-color: var(--accent); }
 
-@media (max-width: 860px) {
-  .sim { grid-template-columns: 1fr; } .side { border-right: 0; border-bottom: 1px solid var(--line); }
-  .grid3, .flow, .headline { grid-template-columns: 1fr 1fr; }
+/* dose check view */
+.tabs { display: flex; gap: 0; flex-wrap: wrap; border: 1px solid var(--line); width: fit-content; max-width: 100%; background: var(--panel); }
+.tab { padding: 7px 16px; border: 0; border-right: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.tab:last-child { border-right: 0; }
+.tab[aria-selected="true"] { background: var(--accent); color: #fff; }
+.sim { display: grid; grid-template-columns: 300px minmax(0, 1fr); background: var(--panel); border: 1px solid var(--line); }
+.sim > * { min-width: 0; }
+.side { padding: 16px; border-right: 1px solid var(--line); display: grid; gap: 16px; align-content: start; background: #fbfcfd; }
+.main { padding: 16px; display: grid; gap: 12px; }
+.dose { display: grid; gap: 10px; }
+.dosebig { font-family: var(--f-data); font-size: 2.2rem; line-height: 1; }
+.dosebig small { font-family: var(--f-body); font-size: .9rem; color: var(--muted); }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); }
+.choice { text-align: left; padding: 8px 10px; border: 0; background: var(--panel); color: var(--ink); cursor: pointer; display: grid; gap: 2px; }
+.choice + .choice { border-left: 1px solid var(--line); }
+.choice b { font-family: var(--f-data); font-size: 1rem; font-weight: 500; }
+.choice span { font-size: .72rem; color: var(--muted); }
+.choice.twin { background: var(--accent-soft); box-shadow: inset 0 -2px 0 var(--accent); }
+.readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); }
+.stat { padding: 8px 12px; display: grid; gap: 2px; border-right: 1px solid var(--line); }
+.stat:last-child { border-right: 0; }
+.stat .v { font-family: var(--f-data); font-size: 1.2rem; }
+.stat .l { font-size: .72rem; color: var(--muted); }
+.stat.bad { background: var(--low-soft); } .stat.bad .v { color: var(--low); }
+.outcome { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--line); border-left: 3px solid var(--ink); background: #fafbfc; font-size: .86rem; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; }
+.split .grid3 { grid-template-columns: 1fr; gap: 0; }
+.split .grid3 .card { border: 0; border-bottom: 1px solid var(--line); }
+.split .headline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.split .headline .card { border-bottom: 1px solid var(--line); }
+
+/* method view */
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); background: var(--panel); counter-reset: s; }
+.flow .card { border: 0; border-right: 1px solid var(--line); }
+.flow .card:last-child { border-right: 0; }
+.flow .card h3::before { counter-increment: s; content: counter(s) ". "; font-family: var(--f-data); color: var(--accent); }
+.limits ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+footer { padding: 4px 16px 24px; color: var(--muted); font-size: .76rem; }
+
+@media (max-width: 1100px) {
+  .pdetail { grid-template-columns: 1fr; }
+  .pdetail > .leftcol, .pdetail > .two { grid-column: 1; }
+  .pdetail > .two { grid-template-columns: 1fr 1fr; }
+  .split { grid-template-columns: 1fr; }
 }
-@media (max-width: 520px) { .grid3, .flow, .headline, .readout { grid-template-columns: 1fr; } .choices { grid-template-columns: 1fr; } }
-@media (prefers-reduced-motion: no-preference) { .line-anim { transition: d .2s; } }
+@media (max-width: 820px) {
+  .clinic, .sim { grid-template-columns: 1fr; }
+  .plist { position: static; max-height: 260px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .side { border-right: 0; border-bottom: 1px solid var(--line); }
+  .pdetail > .two { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpi:nth-child(3) { border-right: 0; } .kpi:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+  .headline, .flow, .grid3 { grid-template-columns: 1fr 1fr; }
+  .brand { border-right: 0; }
+  .bar-right { display: none; }
+}
+@media (max-width: 520px) {
+  .headline, .flow, .grid3, .readout, .choices { grid-template-columns: 1fr; }
+  .stat, .headline .card, .flow .card { border-right: 0; border-bottom: 1px solid var(--line); }
+  .vtab { padding: 0 10px; }
+  .trial label { grid-template-columns: 80px 1fr 80px; }
+}
+@media (prefers-reduced-motion: no-preference) { .prow, .vtab, .btn { transition: background .12s; } }
 </style>
 
-<div class="wrap">
-  <header class="top">
-    <div class="mark">
-      <svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="9" cy="13" r="7.5" fill="none" stroke="var(--accent)" stroke-width="2.4"/><circle cx="17" cy="13" r="7.5" fill="none" stroke="var(--inrange)" stroke-width="2.4"/></svg>
-      DoseTwin
-    </div>
-    <span class="pill">In-silico study · research prototype · not a medical device</span>
-  </header>
+<header class="appbar">
+  <div class="brand"><span class="logo" aria-hidden="true">DT</span><div><b>DoseTwin</b><br><span>Personal insulin-dosing twin</span></div></div>
+  <nav class="views" role="tablist" aria-label="Views">
+    <button class="vtab" role="tab" data-view="patients" aria-selected="true">Patients</button>
+    <button class="vtab" role="tab" data-view="dose" aria-selected="false">Dose check</button>
+    <button class="vtab" role="tab" data-view="evidence" aria-selected="false">Evidence</button>
+    <button class="vtab" role="tab" data-view="method" aria-selected="false">Method</button>
+  </nav>
+  <div class="bar-right"><span class="tag">Synthetic data</span><span class="tag">In-silico study · not a medical device</span></div>
+</header>
 
-  <div class="hero">
-    <span class="eyebrow">Digital twin for insulin-treated diabetes · validated on type 1</span>
-    <h1>Test the dose on your twin before you inject it.</h1>
-    <p>DoseTwin learns a personal glucose–insulin model from 7 days of CGM, pen and step-counter data. At every meal it simulates the next five hours for each possible dose, picks the safest one that keeps glucose in range, and warns of lows before they start.</p>
-  </div>
+<main class="page">
 
-
-  <section class="block" id="clinic" style="padding-block:8px 0">
-    <div><span class="eyebrow">Clinician view</span><h2>Review a patient with their twin</h2></div>
-    <p class="lede">What a diabetes clinic sees before a review: patients sorted by hypoglycaemia risk, the synthetic health record, last week's glucose profile, and the settings the twin suggests. Change any setting and the virtual patient replays a real day from last week under it.</p>
-    <div class="clinic">
-      <nav class="plist" id="plist" aria-label="Patients"><h3>30 patients · sorted by low-glucose risk</h3></nav>
+  <section class="view" id="view-patients">
+    <div class="viewhead"><h1>Patient review</h1><p>Patients ranked by hypoglycaemia risk over the last 7 days. Open a patient to see the record, the glucose profile and the settings the twin suggests. Move a setting and the virtual patient replays a real day under it.</p></div>
+    <div class="clinic" style="margin-top:12px">
+      <nav class="plist" id="plist" aria-label="Patients"><h3>30 patients · highest risk first</h3></nav>
       <div class="pdetail" id="pdetail"></div>
     </div>
   </section>
 
-  <section class="block" style="padding-block:36px 0">
-    <div><span class="eyebrow">Patient view at mealtime</span><h2>Test a dose before injecting it</h2></div>
-  </section>
-  <div class="tabs" role="tablist" id="tabs"></div>
-
-  <div class="sim" id="sim">
-    <aside class="side">
-      <div>
-        <span class="eyebrow" id="mealWhen"></span>
-        <h3 id="mealTitle" style="margin-top:4px"></h3>
-      </div>
-      <dl class="kv" id="mealFacts"></dl>
-      <div class="dose">
-        <label for="dose" class="eyebrow">Dose to test</label>
-        <div class="dosebig"><span id="doseVal" class="num"></span> <small>units</small></div>
-        <input type="range" id="dose" min="0" max="20" step="0.5">
-        <div class="choices">
-          <button class="choice" id="pickStd"><span>Bolus calculator</span><b id="stdDose"></b></button>
-          <button class="choice twin" id="pickTwin"><span>Twin recommends</span><b id="twinDose"></b></button>
+  <section class="view" id="view-dose" hidden>
+    <div class="viewhead"><h1>Dose check at mealtime</h1><p>The patient logs a meal; the twin simulates the next 5 hours for every half-unit dose and recommends the lowest-risk dose that stays above the safety floor.</p></div>
+    <div style="display:grid;gap:12px;margin-top:12px">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="sim" id="sim">
+        <aside class="side">
+          <div>
+            <span class="eyebrow" id="mealWhen"></span>
+            <h3 id="mealTitle" style="margin-top:4px"></h3>
+          </div>
+          <dl class="kv" id="mealFacts"></dl>
+          <div class="dose">
+            <label for="dose" class="eyebrow">Dose to test</label>
+            <div class="dosebig"><span id="doseVal" class="num"></span> <small>units</small></div>
+            <input type="range" id="dose" min="0" max="20" step="0.5">
+            <div class="choices">
+              <button class="choice" id="pickStd"><span>Bolus calculator</span><b id="stdDose"></b></button>
+              <button class="choice twin" id="pickTwin"><span>Twin recommends</span><b id="twinDose"></b></button>
+            </div>
+          </div>
+        </aside>
+        <div class="main">
+          <div class="readout">
+            <div class="stat" id="stMin"><span class="v"></span><span class="l">Predicted lowest glucose (5 h)</span></div>
+            <div class="stat" id="stTir"><span class="v"></span><span class="l">Predicted time 70–180 mg/dL</span></div>
+            <div class="stat" id="stPeak"><span class="v"></span><span class="l">Predicted peak</span></div>
+          </div>
+          <div class="chartbox"><svg class="chart" id="simChart" viewBox="0 0 720 300" role="img" aria-label="Five-hour glucose forecast for the selected dose"></svg></div>
+          <div class="legend">
+            <span><i style="background:var(--accent)"></i>Twin forecast, selected dose</span>
+            <span><i style="background:var(--standard)"></i>Twin forecast, calculator dose</span>
+            <span><i style="background:var(--low);opacity:.5"></i>Safety floor (forecast minus margin)</span>
+            <span id="lgTruth" hidden><i style="background:var(--ink)"></i>Really happened, twin dose <i style="background:var(--ink);opacity:.45;margin-left:10px"></i>Really happened, calculator dose</span>
+          </div>
+          <button class="reveal" id="reveal">Show what really happened with each dose</button>
+          <div class="outcome" id="outcome" hidden></div>
         </div>
       </div>
-    </aside>
-    <div class="main">
-      <div class="readout">
-        <div class="stat" id="stMin"><span class="v"></span><span class="l">Predicted lowest glucose (5 h)</span></div>
-        <div class="stat" id="stTir"><span class="v"></span><span class="l">Predicted time 70–180 mg/dL</span></div>
-        <div class="stat" id="stPeak"><span class="v"></span><span class="l">Predicted peak</span></div>
+      <div class="split">
+        <div class="panel"><div class="ptitle">What this patient's twin learned in 7 days</div>
+          <div class="pbody"><p class="lede">The record gives a starting point; the twin corrects it from sensor and pen data. "True" values come from the hidden virtual patient and are shown only because this is a simulation.</p><div class="grid3" id="learned"></div></div></div>
+        <div class="panel"><div class="ptitle">One evaluation day · same meals, same sensor</div>
+          <div class="pbody"><p class="lede">The same virtual patient living the same day. Only the dosing advice and the low-glucose alerts differ.</p>
+            <div class="chartbox"><svg class="chart" id="dayChart" viewBox="0 0 720 260" role="img" aria-label="24-hour CGM under both arms"></svg></div>
+            <div class="legend"><span><i style="background:var(--standard)"></i>Calculator + CGM trend alert</span><span><i style="background:var(--accent)"></i>DoseTwin</span><span><i style="background:var(--high)"></i>Meal</span><span><i style="background:var(--low)"></i>Predicted-low alert</span></div>
+            <div class="headline" id="dayStats"></div></div></div>
       </div>
-      <div class="chartbox"><svg class="chart" id="simChart" viewBox="0 0 720 300" role="img" aria-label="Five-hour glucose forecast for the selected dose"></svg></div>
-      <div class="legend">
-        <span><i style="background:var(--accent)"></i>Twin forecast, selected dose</span>
-        <span><i style="background:var(--standard)"></i>Twin forecast, calculator dose</span>
-        <span><i style="background:var(--low);opacity:.5"></i>Safety floor (forecast minus margin)</span>
-        <span id="lgTruth" hidden><i style="background:var(--ink)"></i>Really happened, twin dose <i style="background:var(--ink);opacity:.45;margin-left:10px"></i>Really happened, calculator dose</span>
+    </div>
+  </section>
+
+  <section class="view" id="view-evidence" hidden>
+    <div class="viewhead"><h1>Evidence · 90 held-out patient-weeks</h1><p id="evLede"></p></div>
+    <div style="display:grid;gap:16px;margin-top:12px">
+      <div class="headline" id="evHead"></div>
+      <div class="panel"><div class="ptitle">Outcomes by arm · evaluation days 8–14</div><div class="tablewrap" style="border:0"><table id="armTable"></table></div></div>
+      <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))" id="evCharts"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-method" hidden>
+    <div class="viewhead"><h1>Method</h1><p>From device data to a dose recommendation.</p></div>
+    <div style="display:grid;gap:16px;margin-top:12px">
+      <div class="flow">
+        <div class="card"><h3>Collect</h3><p class="muted">CGM every 5 min, smart-pen doses, meal log, phone steps, and the synthetic health record (diagnoses, labs including HbA1c, genetics, prescriptions).</p></div>
+        <div class="card"><h3>Personalise</h3><p class="muted">An extended Bergman model starts from the record (weight, prescriptions, HbA1c) and is fitted to the patient's own 5-hour forecasts (MAP, robust loss) in about a second.</p></div>
+        <div class="card"><h3>Synchronise</h3><p class="muted">An observer keeps the twin locked to the CGM, so it always knows insulin on board, carbs on board and recent activity.</p></div>
+        <div class="card"><h3>Decide</h3><p class="muted">Every half-unit dose is simulated for 5 h. Doses whose pessimistic path dips below 70 mg/dL are rejected; the lowest-risk safe dose is shown. Lows are predicted from the twin plus the CGM trend.</p></div>
       </div>
-      <button class="reveal" id="reveal">Show what really happened with each dose</button>
-      <div class="outcome" id="outcome" hidden></div>
-    </div>
-  </div>
-
-  <section class="block">
-    <div><span class="eyebrow">After 7 days of data</span><h2>What this patient's twin learned</h2></div>
-    <p class="lede">The clinic record gives a starting point. The twin corrects it from the patient's own sensor and pen data. The "true" values come from the hidden virtual patient and are shown here only because this is a simulation.</p>
-    <div class="grid3" id="learned"></div>
-  </section>
-
-  <section class="block">
-    <div><span class="eyebrow">One evaluation day, same meals, same sensor</span><h2>Standard care vs DoseTwin</h2></div>
-    <p class="lede">Both lines are the same virtual patient living the same day: identical meals, carb-counting mistakes, walks and sensor noise. Only the dosing advice and the low-glucose alerts differ.</p>
-    <div class="chartbox"><svg class="chart" id="dayChart" viewBox="0 0 720 260" role="img" aria-label="24-hour CGM under both arms"></svg></div>
-    <div class="legend"><span><i style="background:var(--standard)"></i>Calculator + CGM trend alert</span><span><i style="background:var(--accent)"></i>DoseTwin</span><span><i style="background:var(--high)"></i>Meal</span><span><i style="background:var(--low)"></i>Predicted-low alert (DoseTwin)</span></div>
-    <div class="headline" id="dayStats"></div>
-  </section>
-
-  <section class="block" id="evidence">
-    <div><span class="eyebrow">Evidence</span><h2>90 held-out patient-weeks</h2></div>
-    <p class="lede" id="evLede"></p>
-    <div class="headline" id="evHead"></div>
-    <div class="tablewrap"><table id="armTable"></table></div>
-    <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))" id="evCharts"></div>
-  </section>
-
-  <section class="block">
-    <div><span class="eyebrow">How it works</span><h2>From devices to a dose</h2></div>
-    <div class="flow">
-      <div class="card"><h3>Collect</h3><p class="muted">CGM every 5 min, smart-pen doses, meal photos or carb log, phone steps, and the clinic record (weight, carb ratio, correction factor, basal).</p></div>
-      <div class="card"><h3>Personalise</h3><p class="muted">An extended Bergman model starts from the clinic record and is fitted to the patient's own 5-hour forecasts (MAP, robust loss). It takes about a second per patient.</p></div>
-      <div class="card"><h3>Synchronise</h3><p class="muted">An observer keeps the twin locked to the CGM so it always knows insulin on board, carbs on board and recent activity.</p></div>
-      <div class="card"><h3>Decide</h3><p class="muted">Every half-unit dose is simulated for 5 h. Doses whose pessimistic path dips below 70 mg/dL are rejected; the lowest-risk safe dose is shown.</p></div>
+      <div class="panel limits"><div class="ptitle">What this does not show yet</div><div class="pbody"><ul id="limits"></ul></div></div>
     </div>
   </section>
 
-  <section class="block">
-    <div class="limits">
-      <h3>What this does not show yet</h3>
-      <ul id="limits"></ul>
-    </div>
-  </section>
-
-  <footer>DoseTwin · Happiest Health Digital Twin Challenge 2026 · Ground-truth patients: UVA/Padova model via the open-source simglucose package (MIT). Code, data generation and every number on this page are reproducible from the repository.</footer>
-</div>
+</main>
+<footer>DoseTwin · Team Drafts · Happiest Health Digital Twin Challenge 2026 · Ground-truth patients: UVA/Padova model via the open-source simglucose package (MIT). Every number on this page is reproducible from the repository.</footer>
 
 <script>/*TWINJS*/</script>
 <script>
@@ -575,6 +608,10 @@ const CLINIC = /*CLINIC*/;
         <div class="legend"><span><i style="background:var(--standard)"></i>Current settings</span><span><i style="background:var(--accent)"></i>Trial settings</span><span><i style="background:var(--high)"></i>Logged meal</span></div>
         <p id="replayStats" style="font-size:.9rem;margin-top:6px"></p>
         <p class="note">Same meals, carb counts and steps as the recorded day; doses recomputed with the trial settings. This is the twin's prediction, not a measurement.</p></div>`;
+    const pd = $("#pdetail"), lc = document.createElement("div");
+    lc.className = "leftcol";
+    const agpBox = pd.children[2], replayBox = pd.children[4];
+    pd.insertBefore(lc, agpBox); lc.append(agpBox, replayBox);
     drawAGP();
     const upd = () => setTrial(+$("#trCr").value, +$("#trCf").value, +$("#trBa").value);
     ["#trCr", "#trCf", "#trBa"].forEach((q) => $(q).addEventListener("input", upd));
@@ -590,5 +627,20 @@ const CLINIC = /*CLINIC*/;
   }).join(""));
   document.querySelectorAll(".prow").forEach((b) => b.addEventListener("click", () => select(b.dataset.id)));
   select(pts[0].id);
+})();
+</script>
+<script>
+(() => {
+  const tabs = [...document.querySelectorAll(".vtab")];
+  function show(v) {
+    if (!document.getElementById("view-" + v)) v = "patients";
+    tabs.forEach((t) => t.setAttribute("aria-selected", t.dataset.view === v));
+    document.querySelectorAll(".view").forEach((s) => { s.hidden = s.id !== "view-" + v; });
+    try { localStorage.setItem("dosetwin-view", v); } catch (e) {}
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { show(t.dataset.view); window.scrollTo(0, 0); }));
+  let start = (location.hash || "").slice(1);
+  if (!start) { try { start = localStorage.getItem("dosetwin-view") || ""; } catch (e) {} }
+  show(start || "patients");
 })();
 </script>
