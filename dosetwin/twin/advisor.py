@@ -8,6 +8,15 @@ At each meal the advisor
      doses whose pessimistic trajectory (forecast minus a safety margin growing
      12 mg/dL per hour, capped at 25 mg/dL) dips below 70 mg/dL;
   4. returns the lowest-risk safe dose (hard cap: 2x the standard dose, +3 U).
+     If no dose is safe (glucose is already low or falling at the meal), it
+     returns the lowest-risk dose that does not deepen the predicted low by
+     more than 5 mg/dL compared with no insulin, so a large meal is still
+     covered once the carbs take effect.
+
+For patients whose record carries "history of severe hypoglycaemia" (E16.0)
+the safety floor is raised from 70 to 80 mg/dL, following the guidance to set
+less stringent targets for people with impaired hypoglycaemia awareness
+(ADA Standards of Care, section 6). This was fixed a priori, not tuned.
 
 Margin settings were frozen on the development cohort (seed 7) before the
 held-out evaluation. The advisor never sees the hidden physiology.
@@ -32,7 +41,8 @@ class TwinAdvisor:
     """Meal-bolus policy driven by per-patient twins."""
 
     def __init__(self, thetas: dict, ehr, names: list, name="twin", margin_per_hour=12.0,
-                 margin_cap=25.0, hypo_floor=70.0, cap_factor=2.0, tracker: TwinTracker | None = None):
+                 margin_cap=25.0, hypo_floor=70.0, cap_factor=2.0, tracker: TwinTracker | None = None,
+                 history_floor_bump=10.0):
         self.name = name
         self.names = names
         self.tracker = tracker or TwinTracker(thetas, ehr, names)
@@ -41,7 +51,8 @@ class TwinAdvisor:
         self.CR = e["carb_ratio_g_per_u"].to_numpy(float)
         self.margin_per_hour = margin_per_hour
         self.margin_cap = margin_cap
-        self.hypo_floor = hypo_floor
+        hist = e["severe_hypo_history"].to_numpy(float) if "severe_hypo_history" in e.columns else np.zeros(len(names))
+        self.hypo_floor = hypo_floor + history_floor_bump * hist
         self.cap_factor = cap_factor
         self.decisions = []
 
@@ -59,12 +70,16 @@ class TwinAdvisor:
             doses = np.arange(0.0, dmax + 1e-9, PEN_STEP)
         traj = np.stack([tr.forecast(i, t, log, H, bolus=d, carbs=est_carbs) for d in doses])
         margin = np.minimum(self.margin_per_hour * np.arange(H + 1) / 60.0, self.margin_cap)
-        feasible = (traj - margin).min(axis=1) >= self.hypo_floor
+        feasible = (traj - margin).min(axis=1) >= self.hypo_floor[i]
         return doses, traj, risk(traj).mean(axis=1), feasible
 
     def meal_bolus(self, i: int, t: int, est_carbs: float, cgm: float, iob: float, log) -> float:
         doses, traj, r, feasible = self.evaluate_doses(i, t, est_carbs, log)
-        k = int(np.argmin(np.where(feasible, r, np.inf))) if feasible.any() else 0
+        if not feasible.any():
+            margin = np.minimum(self.margin_per_hour * np.arange(traj.shape[1]) / 60.0, self.margin_cap)
+            pmin = (traj - margin).min(axis=1)
+            feasible = pmin >= pmin[0] - 5.0
+        k = int(np.argmin(np.where(feasible, r, np.inf)))
         dose = float(doses[k])
         self.decisions.append((self.names[i], t, est_carbs, dose, self.standard_dose(i, est_carbs, cgm, iob)))
         return dose

@@ -32,11 +32,12 @@ class TwinTracker:
         else:
             z = self._z[i].copy()
         if t > t0:
+            act, sd = _act(log), _sd(log)
             Z = M.sync_run(th, log["bolus"][i, t0:t], self.basal[i], log["carbs_logged"][i, t0:t],
-                           log["steps"][i, t0:t], self.W[i], log["cgm"][i, t0:t], t0, self.gains, z)
+                           act[i, t0:t], sd[i, t0:t], self.W[i], log["cgm"][i, t0:t], t0, self.gains, z)
             z = Z[-1].copy()
             M.step(z, th, log["bolus"][i, t - 1], self.basal[i], log["carbs_logged"][i, t - 1],
-                   log["steps"][i, t - 1], self.W[i], t - 1, False)
+                   act[i, t - 1], sd[i, t - 1], self.W[i], t - 1, False)
         self._z[i], self._t[i] = z.copy(), t
         # apply observer correction for a CGM sample at t (not stored, idempotent)
         y = log["cgm"][i, t]
@@ -47,8 +48,19 @@ class TwinTracker:
             z[9] = np.clip(z[9] + self.gains[2] * e, -3.0, 3.0)
         return z
 
-    def forecast(self, i: int, t: int, log: dict, H: int, bolus=0.0, carbs=0.0) -> np.ndarray:
+    def forecast(self, i: int, t: int, log: dict, H: int, bolus=0.0, carbs=0.0, theta=None) -> np.ndarray:
         z = self.state(i, t, log)
         u = np.zeros(H); u[0] = bolus
         c = np.zeros(H); c[0] = carbs
-        return M.forecast(self.theta(i), z, u, self.basal[i], c, np.zeros(H), self.W[i], t, H)
+        th = self.theta(i) if theta is None else theta
+        return M.forecast(th, z, u, self.basal[i], c, np.zeros(H), float(_sd(log)[i, t]), self.W[i], t, H)
+
+
+def _act(log):
+    return log["act"] if "act" in log else log["steps"]
+
+
+def _sd(log):
+    if "sleep_debt" not in log:
+        log["sleep_debt"] = np.zeros_like(log["bolus"])
+    return log["sleep_debt"]

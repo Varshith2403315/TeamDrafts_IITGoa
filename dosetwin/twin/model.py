@@ -14,9 +14,14 @@ State  z = [S1, S2, I, X, D1, D2, E, G, Gs, d]
   G      plasma glucose (mg/dL)                    Gb   glucose at prescribed basal
   Gs     interstitial / sensor glucose (mg/dL)     SG   glucose effectiveness
   d      unexplained glucose rate (mg/dL/min)      alpha activity effect, dawn
+                                                   bs   sensitivity loss per hour
+                                                        of sleep debt
 
 Inputs per minute: bolus u (U), basal rate b (U/min), logged carbs c (g),
-steps (per minute). Time step: 1 minute (explicit Euler; stable for these
+activity in step-equivalents per minute (steps fused with heart rate, see
+dosetwin/fusion.py) and sleep debt sd (h, from the wearable's estimate of the
+previous night). Insulin sensitivity in force is SI * exp(-bs * sd).
+Time step: 1 minute (explicit Euler; stable for these
 time-constants). All heavy loops are numba-compiled.
 """
 from __future__ import annotations
@@ -25,8 +30,9 @@ import numpy as np
 from numba import njit
 
 # parameter vector layout -------------------------------------------------
-P_NAMES = ["log_SI", "Gb", "log_fc", "log_tm", "log_ti", "alpha", "dawn", "log_SG"]
-I_LSI, I_GB, I_LFC, I_LTM, I_LTI, I_ALPHA, I_DAWN, I_LSG = range(8)
+P_NAMES = ["log_SI", "Gb", "log_fc", "log_tm", "log_ti", "alpha", "dawn", "log_SG", "beta_sleep"]
+I_LSI, I_GB, I_LFC, I_LTM, I_LTI, I_ALPHA, I_DAWN, I_LSG, I_BS = range(9)
+NP = 9
 NZ = 10
 KE = 0.138    # 1/min plasma insulin elimination
 P2 = 0.02     # 1/min remote insulin action rate
@@ -37,7 +43,7 @@ VG = 1.6      # dL/kg glucose distribution volume
 
 
 def default_theta() -> np.ndarray:
-    th = np.zeros(8)
+    th = np.zeros(NP)
     th[I_LSI] = np.log(1.0)
     th[I_GB] = 140.0
     th[I_LFC] = np.log(0.9)
@@ -46,6 +52,7 @@ def default_theta() -> np.ndarray:
     th[I_ALPHA] = 3.0
     th[I_DAWN] = 0.1
     th[I_LSG] = np.log(0.01)
+    th[I_BS] = 0.05
     return th
 
 
@@ -66,9 +73,9 @@ def _dawn_shape(minute):
 
 
 @njit(cache=True)
-def step(z, th, u, b, c, steps, W, minute, decay_d):
+def step(z, th, u, b, c, steps, sd, W, minute, decay_d):
     """Advance the twin state one minute (in place)."""
-    SI = np.exp(th[0]); Gb = th[1]; fc = np.exp(th[2]); tm = np.exp(th[3])
+    SI = np.exp(th[0] - th[8] * sd); Gb = th[1]; fc = np.exp(th[2]); tm = np.exp(th[3])
     ti = np.exp(th[4]); alpha = th[5]; dawn = th[6]; SG = np.exp(th[7])
     S1, S2, I, X, D1, D2, E, G, Gs, d = z[0], z[1], z[2], z[3], z[4], z[5], z[6], z[7], z[8], z[9]
     Ib = b / KE
@@ -104,7 +111,7 @@ def steady_state(th, b, G0):
 
 
 @njit(cache=True)
-def sync_run(th, u, b, c, steps, W, cgm, t_start, gains, z0):
+def sync_run(th, u, b, c, steps, sd, W, cgm, t_start, gains, z0):
     """Run the twin along recorded inputs, correcting with CGM (observer).
 
     Returns the full state history Z[T, NZ] (state at the *start* of minute t).
@@ -127,28 +134,29 @@ def sync_run(th, u, b, c, steps, W, cgm, t_start, gains, z0):
                 z[9] = -3.0
         for j in range(NZ):
             Z[t, j] = z[j]
-        step(z, th, u[t], b, c[t], steps[t], W, t_start + t, False)
+        step(z, th, u[t], b, c[t], steps[t], sd[t], W, t_start + t, False)
     return Z
 
 
 @njit(cache=True)
-def forecast(th, z0, u, b, c, steps, W, minute0, H):
+def forecast(th, z0, u, b, c, steps, sd, W, minute0, H):
     """Open-loop forecast of sensor glucose for H minutes from state z0.
 
     u, c, steps: future inputs of length >= H (zeros if unknown).
+    sd: sleep debt in force (h), held constant over the horizon.
     Returns Gs path of length H+1 (index k = k minutes ahead).
     """
     z = z0.copy()
     out = np.empty(H + 1)
     out[0] = z[8]
     for k in range(H):
-        step(z, th, u[k], b, c[k], steps[k], W, minute0 + k, True)
+        step(z, th, u[k], b, c[k], steps[k], sd, W, minute0 + k, True)
         out[k + 1] = z[8]
     return out
 
 
 @njit(cache=True)
-def window_forecasts(th, Z, u, b, c, steps, W, t_start, starts, H, known_future):
+def window_forecasts(th, Z, u, b, c, steps, sd, W, t_start, starts, H, known_future):
     """Open-loop forecasts from many snapshot times.
 
     known_future=True  -> future boluses, carbs and steps are fed in. Used ONLY
@@ -164,8 +172,8 @@ def window_forecasts(th, Z, u, b, c, steps, W, t_start, starts, H, known_future)
         for k in range(H):
             t = s + k
             if known_future:
-                step(z, th, u[t], b, c[t], steps[t], W, t_start + t, True)
+                step(z, th, u[t], b, c[t], steps[t], sd[t], W, t_start + t, True)
             else:
-                step(z, th, 0.0, b, 0.0, 0.0, W, t_start + t, True)
+                step(z, th, 0.0, b, 0.0, 0.0, sd[s], W, t_start + t, True)
             out[i, k + 1] = z[8]
     return out
