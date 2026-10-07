@@ -11,9 +11,24 @@ reported for people with T1D in India and elsewhere:
 * missed (10%) and late (12%) meal boluses; unbolused evening snacks;
 * "rule of 15" hypo rescue (at night only when the <55 mg/dL alarm wakes
   the patient) and ad-hoc correction boluses for highs;
-* evening walks (wearable steps) that transiently raise insulin sensitivity;
-* day-to-day insulin-sensitivity variation and a dawn effect;
+* evening walks (seen by the step counter) and exercise with few steps
+  (cycling, gym, yoga; seen only by the heart-rate sensor), both of which
+  transiently raise insulin sensitivity;
+* sleep: a personal habitual duration, night-to-night variation and some short
+  or broken nights. A night of short or fragmented sleep lowers insulin
+  sensitivity for the following day (about 20% after a 4 h night, in line with
+  Donga et al., Diabetes Care 2010), with a personal susceptibility;
+* kidney function (eGFR): reduced eGFR slows insulin clearance, so the same
+  prescribed doses act more strongly (the cohort is enriched for this);
+* impaired hypoglycaemia awareness: blunted counter-regulation, so lows go
+  deeper and last longer (the cohort is enriched for this);
+* residual day-to-day insulin-sensitivity variation and a dawn effect;
 * a mis-titrated long-acting basal dose (approximated as a flat infusion).
+
+The wearable sees heart rate every minute and an estimate of each night's
+sleep (duration and awakenings, with measurement error). The clinic record
+holds eGFR (lab noise) and the diagnosis "history of severe hypoglycaemia",
+which is present for most, but not all, patients with impaired awareness.
 
 Every random draw is seeded per patient so that two dosing policies can be
 compared on *exactly* the same meals, errors, walks and sensor noise.
@@ -25,6 +40,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
+from ..fusion import activity_equiv, sleep_debt
 from .uva_padova import CGMNoise, PatientBatch, load_params
 
 MIN_PER_DAY = 1440
@@ -45,6 +61,21 @@ class Behaviour:
     day_sens: np.ndarray      # day-to-day sensitivity multipliers
     cr_factor: float = 1.0    # prescribed carb ratio / ideal (clinic mis-titration)
     cf_factor: float = 1.0    # prescribed correction factor / ideal
+    sleep_mean_h: float = 7.0 # habitual sleep duration
+    sleep_sens: float = 0.05  # fractional sensitivity loss per hour of sleep debt
+    egfr: float = 100.0       # true kidney function (mL/min/1.73m2)
+    impaired_awareness: bool = False
+    hr_rest: float = 70.0     # resting heart rate (bpm)
+
+    @property
+    def clearance(self) -> float:
+        """Insulin-degradation multiplier: 1 at eGFR >= 90, 0.8 at eGFR 30."""
+        return 1.0 - 0.2 * float(np.clip((90.0 - self.egfr) / 60.0, 0.0, 1.0))
+
+    @property
+    def counter_reg(self) -> float:
+        """Maximum fractional rise in glucose production during hypoglycaemia."""
+        return 0.1 if self.impaired_awareness else 0.5
 
 
 @dataclass
@@ -52,8 +83,14 @@ class Scenario:
     """Minute-resolution exogenous inputs for one patient."""
 
     meals: list               # (minute, true_g, est_g, bolus_mode) bolus_mode: 0 normal,1 missed,2 late
-    walks: np.ndarray         # activity intensity 0..1 per minute
+    walks: np.ndarray         # true activity intensity 0..1 per minute (walks + other exercise)
     steps: np.ndarray         # observed steps per minute (wearable)
+    hr: np.ndarray            # observed heart rate per minute (wearable)
+    asleep: np.ndarray        # true sleep state per minute (bool)
+    debt_true: np.ndarray     # true sleep debt (h) in force at each minute
+    debt_obs: np.ndarray      # wearable estimate of the same
+    asleep_obs: np.ndarray    # wearable sleep state per minute
+    nights: list = field(default_factory=list)  # (onset, wake, hours, awakenings, hours_obs, awak_obs)
 
 
 def _age_scale(name: str) -> float:
@@ -67,10 +104,23 @@ def make_behaviour(name: str, rng: np.random.RandomState, days: int) -> Behaviou
         exercise_gain=rng.uniform(0.6, 1.6),
         dawn=rng.uniform(0.0, 0.35),
         meal_scale=_age_scale(name),
-        day_sens=np.exp(rng.normal(0, 0.18, days)),
+        day_sens=np.exp(rng.normal(0, 0.15, days)),
         cr_factor=rng.uniform(0.75, 1.30),
         cf_factor=rng.uniform(0.75, 1.30),
+        **_extra_traits(name, rng),
     )
+
+
+def _extra_traits(name: str, rng: np.random.RandomState) -> dict:
+    adult = name.startswith("adult")
+    if adult:
+        egfr = rng.uniform(30, 60) if rng.rand() < 0.35 else np.clip(rng.normal(95, 14), 60, 130)
+        hr_rest = rng.uniform(58, 75)
+    else:
+        egfr = rng.uniform(45, 75) if rng.rand() < 0.08 else np.clip(rng.normal(110, 12), 75, 140)
+        hr_rest = rng.uniform(72, 90) if name.startswith("child") else rng.uniform(64, 80)
+    return dict(sleep_mean_h=rng.uniform(6.0, 7.8), sleep_sens=0.06 * rng.uniform(0.5, 1.5),
+                egfr=float(egfr), impaired_awareness=bool(rng.rand() < 0.25), hr_rest=float(hr_rest))
 
 
 def make_scenario(beh: Behaviour, rng: np.random.RandomState, days: int) -> Scenario:
@@ -101,10 +151,41 @@ def make_scenario(beh: Behaviour, rng: np.random.RandomState, days: int) -> Scen
             walks[s:s + dur] = rng.uniform(0.6, 1.0)
     # wearable steps: walking ~ 110 steps/min * intensity + daytime background
     minute_of_day = np.arange(T) % MIN_PER_DAY
-    awake = (minute_of_day > 7 * 60) & (minute_of_day < 23 * 60)
-    background = awake * rng.poisson(6, T)
+    awake_day = (minute_of_day > 7 * 60) & (minute_of_day < 23 * 60)
+    background = awake_day * rng.poisson(6, T)
     steps = (walks * 110 + rng.normal(0, 8, T) * (walks > 0)).clip(0) + background
-    return Scenario(meals=meals, walks=walks, steps=steps.round())
+    # exercise with few steps (cycling, gym, yoga): seen only by heart rate
+    other = np.zeros(T)
+    for d in range(days):
+        if rng.rand() < 0.3:
+            s = int(d * MIN_PER_DAY + rng.normal(17 * 60, 60))
+            dur = int(rng.uniform(30, 60))
+            other[s:s + dur] = rng.uniform(0.5, 0.9)
+    act = np.maximum(walks, other)
+    # sleep: night d starts on the evening of day d
+    asleep = np.zeros(T, bool)
+    asleep_obs = np.zeros(T, bool)
+    debt_true = np.zeros(T)
+    debt_obs = np.zeros(T)
+    nights = []
+    for d in range(days):
+        onset = d * MIN_PER_DAY + int(np.clip(rng.normal(23.5 * 60, 30), 23 * 60, 25.5 * 60))
+        hours = (rng.uniform(3.5, 5.5) if rng.rand() < 0.15
+                 else float(np.clip(rng.normal(beh.sleep_mean_h, 0.7), 4.0, 9.0)))
+        wake = min(onset + int(hours * 60), (d + 1) * MIN_PER_DAY + 7 * 60 + 45)
+        hours = (wake - onset) / 60.0
+        awak = int(rng.poisson(1.5))
+        hours_obs = hours + rng.normal(0, 0.3)
+        awak_obs = max(0, awak + int(rng.randint(-1, 2)))
+        nights.append((onset, wake, round(hours, 2), awak, round(hours_obs, 2), awak_obs))
+        asleep[onset:wake] = True
+        o2 = onset + int(rng.normal(0, 10)); w2 = wake + int(rng.normal(0, 10))
+        asleep_obs[max(o2, 0):w2] = True
+        debt_true[wake:] = sleep_debt(hours, awak)
+        debt_obs[wake:] = sleep_debt(hours_obs, awak_obs)
+    hr = (beh.hr_rest + 10.0 * ~asleep + 70.0 * act + rng.normal(0, 3, T)).round()
+    return Scenario(meals=meals, walks=act, steps=steps.round(), hr=hr, asleep=asleep,
+                    debt_true=debt_true, debt_obs=debt_obs, asleep_obs=asleep_obs, nights=nights)
 
 
 class StandardCalculator:
@@ -164,8 +245,22 @@ class World:
             "basal_u_per_day": (basal * MIN_PER_DAY).round(1),
         })
 
-    def run(self, policy_for_day, rescue=True, alerter=None, alert_response=0.8) -> dict:
+    def device_arrays(self) -> dict:
+        """Wearable streams known before the run (they do not depend on glucose)."""
+        sc = self.scenarios
+        steps = np.stack([s.steps for s in sc]).astype(float)
+        hr = np.stack([s.hr for s in sc]).astype(float)
+        return {"steps": steps, "hr": hr, "act": activity_equiv(steps, hr),
+                "sleep_debt": np.stack([s.debt_obs for s in sc]),
+                "asleep": np.stack([s.asleep_obs for s in sc]).astype(float)}
+
+    def run(self, policy_for_day, rescue=True, alerter=None, alert_response=0.8,
+            bedtime=None, bedtime_response=0.8) -> dict:
         """Simulate all patients. `policy_for_day(day)` returns the meal-bolus policy.
+
+        `alerter(i, t, log, cgm)` -> bool: predicted-low alert (patient eats 15 g
+        with probability `alert_response`). `bedtime(i, t, log)` -> grams: called
+        at 23:00; a suggested bedtime snack eaten with probability `bedtime_response`.
 
         Returns minute-resolution logs (what the devices saw + hidden truth).
         """
@@ -177,8 +272,16 @@ class World:
         E = np.zeros(N)
         exg = np.array([b.exercise_gain for b in self.behaviours])
         dawn = np.array([b.dawn for b in self.behaviours])
-        log = {k: np.zeros((N, T)) for k in ["bg", "cgm", "carbs_true", "carbs_logged", "bolus", "steps"]}
+        log = {k: np.zeros((N, T)) for k in ["bg", "cgm", "carbs_true", "carbs_logged", "bolus"]}
         log["cgm"][:] = np.nan
+        log.update(self.device_arrays())
+        act = np.stack([sc.walks for sc in self.scenarios])
+        asleep = np.stack([sc.asleep for sc in self.scenarios])
+        ssens = np.array([b.sleep_sens for b in self.behaviours])
+        sleep_vm = np.exp(-ssens[:, None] * np.stack([sc.debt_true for sc in self.scenarios]))
+        clr = np.array([b.clearance for b in self.behaviours])
+        crg = np.array([b.counter_reg for b in self.behaviours])
+        day_sens = np.stack([b.day_sens for b in self.behaviours])
         boluses = [[] for _ in range(N)]
         events = [[] for _ in range(N)]
         meal_at = [dict() for _ in range(N)]
@@ -186,7 +289,6 @@ class World:
         for i, sc in enumerate(self.scenarios):
             for (tm, g, est, mode) in sc.meals:
                 meal_at[i][tm] = (g, est, mode)
-            log["steps"][i] = sc.steps
         alert_rng = [np.random.RandomState(self.seed * 7919 + i) for i in range(N)]
         last_rescue = np.full(N, -999)
         last_corr = np.full(N, -999)
@@ -224,7 +326,7 @@ class World:
                     bol[i] += u
                     events[i].append((t, "late_bolus", u, lt, policy.name))
                 if rescue and t % CGM_PERIOD == 0:
-                    awake = 7 * 60 <= mod[t] <= 23 * 60
+                    awake = not asleep[i, t]
                     thr = 70.0 if awake else 55.0  # asleep: only the low alarm wakes them
                     if cgm_now[i] < thr and t - last_rescue[i] >= 20:
                         cho[i] += 15.0
@@ -245,19 +347,27 @@ class World:
                         bol[i] += u
                         last_corr[i] = t
                         events[i].append((t, "correction", u, 0.0, policy.name))
+                if bedtime is not None and mod[t] == 23 * 60:
+                    g = bedtime(i, t, log)
+                    if g > 0:
+                        events[i].append((t, "bedtime_risk", 0.0, g, policy.name))
+                        if alert_rng[i].rand() < bedtime_response:
+                            cho[i] += g
+                            log["carbs_logged"][i, t] += g
+                            events[i].append((t, "bedtime_snack", 0.0, g, policy.name))
                 if bol[i] > 0:
                     boluses[i].append((t, bol[i]))
             # exercise state (wearable-driven in reality; hidden here)
-            a = np.array([sc.walks[t] for sc in self.scenarios])
+            a = act[:, t]
             tau = np.where(a > E, tau_on, tau_off)
             E = E + (a - E) / tau
-            sens = np.array([b.day_sens[day] for b in self.behaviours])
-            vm = sens * (1 + exg * E)
-            egp = 1 + dawn * dawn_shape[t]
-            log["bg"][:, t] = pb.bg
+            vm = day_sens[:, day] * sleep_vm[:, t] * (1 + exg * E)
+            bg = pb.bg
+            egp = (1 + dawn * dawn_shape[t]) * (1 + crg * np.clip((75.0 - bg) / 35.0, 0.0, 1.0))
+            log["bg"][:, t] = bg
             log["carbs_true"][:, t] = cho
             log["bolus"][:, t] = bol
-            pb.step(cho, basal + bol, vm_mult=vm, egp_mult=egp)
+            pb.step(cho, basal + bol, vm_mult=vm, egp_mult=egp, clr_mult=clr)
         log["basal_u_per_min"] = basal
         log["events"] = events
         return log
@@ -281,6 +391,9 @@ def to_dataframes(world: World, log: dict) -> tuple[pd.DataFrame, pd.DataFrame, 
             "carbs_logged": np.add.reduceat(log["carbs_logged"][i], t5),
             "bolus_u": np.add.reduceat(log["bolus"][i], t5),
             "steps": np.add.reduceat(log["steps"][i], t5),
+            "heart_rate": log["hr"][i, t5],
+            "sleep_debt_h": log["sleep_debt"][i, t5],
+            "asleep": log["asleep"][i, t5],
         })
         rows.append(df)
     data = pd.concat(rows, ignore_index=True)

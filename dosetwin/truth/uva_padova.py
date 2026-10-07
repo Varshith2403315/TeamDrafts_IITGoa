@@ -10,7 +10,11 @@ this implementation matches the original `simglucose.T1DPatient` trajectory.
 Extensions beyond simglucose (all off by default, documented in docs/METHODS.md):
   * `vm_mult`  - multiplier on insulin-dependent utilisation (Vm0, Vmx); used to
                  model day-to-day insulin-sensitivity variation and exercise.
-  * `egp_mult` - multiplier on endogenous glucose production kp1 (dawn effect).
+  * `egp_mult` - multiplier on endogenous glucose production kp1 (dawn effect,
+                 counter-regulation during hypoglycaemia).
+  * `clr_mult` - multiplier on peripheral and hepatic insulin degradation
+                 (m4, m30); < 1 models reduced kidney function (extension of
+                 simglucose; 1 reproduces the original exactly).
 
 IMPORTANT: the digital twin never sees these equations or parameters. They are
 the hidden "real patient" that the twin must learn from sensor data alone.
@@ -80,7 +84,7 @@ class PatientBatch:
         return self.x[:, 3] / self.P["Vg"]
 
     # ------------------------------------------------------------- dynamics
-    def _f(self, x, cho_mg, ins, vm_mult, egp_mult, Dbar):
+    def _f(self, x, cho_mg, ins, vm_mult, egp_mult, Dbar, clr_mult):
         P = self.P
         dx = np.zeros_like(x)
         qsto = x[:, 0] + x[:, 1]
@@ -103,13 +107,13 @@ class PatientBatch:
         Uidt = Vmt * x[:, 4] / (P["Km0"] + x[:, 4])
         d4 = -Uidt + P["k1"] * x[:, 3] - P["k2"] * x[:, 4]
         dx[:, 4] = (x[:, 4] >= 0) * d4
-        d5 = -(P["m2"] + P["m4"]) * x[:, 5] + P["m1"] * x[:, 9] + P["ka1"] * x[:, 10] + P["ka2"] * x[:, 11]
+        d5 = -(P["m2"] + P["m4"] * clr_mult) * x[:, 5] + P["m1"] * x[:, 9] + P["ka1"] * x[:, 10] + P["ka2"] * x[:, 11]
         It = x[:, 5] / P["Vi"]
         dx[:, 5] = (x[:, 5] >= 0) * d5
         dx[:, 6] = -P["p2u"] * x[:, 6] + P["p2u"] * (It - P["Ib"])
         dx[:, 7] = -P["ki"] * (x[:, 7] - It)
         dx[:, 8] = -P["ki"] * (x[:, 8] - x[:, 7])
-        d9 = -(P["m1"] + P["m30"]) * x[:, 9] + P["m2"] * x[:, 5]
+        d9 = -(P["m1"] + P["m30"] * clr_mult) * x[:, 9] + P["m2"] * x[:, 5]
         dx[:, 9] = (x[:, 9] >= 0) * d9
         d10 = ins - (P["ka1"] + P["kd"]) * x[:, 10]
         dx[:, 10] = (x[:, 10] >= 0) * d10
@@ -119,7 +123,7 @@ class PatientBatch:
         dx[:, 12] = (x[:, 12] >= 0) * d12
         return dx
 
-    def step(self, cho_announce, insulin_u_per_min, vm_mult=None, egp_mult=None):
+    def step(self, cho_announce, insulin_u_per_min, vm_mult=None, egp_mult=None, clr_mult=None):
         """Advance one minute.
 
         cho_announce: g of carbohydrate *started* this minute (eaten at 5 g/min)
@@ -128,6 +132,7 @@ class PatientBatch:
         N = self.N
         vm_mult = np.ones(N) if vm_mult is None else vm_mult
         egp_mult = np.ones(N) if egp_mult is None else egp_mult
+        clr_mult = np.ones(N) if clr_mult is None else clr_mult
         # meal queue (simglucose semantics)
         self.planned += cho_announce
         to_eat = np.where(self.planned > 0, np.minimum(EAT_RATE, self.planned), 0.0)
@@ -147,10 +152,10 @@ class PatientBatch:
         h = 1.0 / self.substeps
         x = self.x
         for _ in range(self.substeps):
-            k1 = self._f(x, cho_mg, ins, vm_mult, egp_mult, Dbar)
-            k2 = self._f(x + h / 2 * k1, cho_mg, ins, vm_mult, egp_mult, Dbar)
-            k3 = self._f(x + h / 2 * k2, cho_mg, ins, vm_mult, egp_mult, Dbar)
-            k4 = self._f(x + h * k3, cho_mg, ins, vm_mult, egp_mult, Dbar)
+            k1 = self._f(x, cho_mg, ins, vm_mult, egp_mult, Dbar, clr_mult)
+            k2 = self._f(x + h / 2 * k1, cho_mg, ins, vm_mult, egp_mult, Dbar, clr_mult)
+            k3 = self._f(x + h / 2 * k2, cho_mg, ins, vm_mult, egp_mult, Dbar, clr_mult)
+            k4 = self._f(x + h * k3, cho_mg, ins, vm_mult, egp_mult, Dbar, clr_mult)
             x = x + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
         self.x = np.maximum(x, 0.0)
         self.t += 1
