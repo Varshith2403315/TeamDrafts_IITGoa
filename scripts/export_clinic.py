@@ -15,6 +15,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from dosetwin import bedtime as BT  # noqa: E402
 from dosetwin.ehr import build_records, ehr_table  # noqa: E402
 from dosetwin.metrics import glycemic_metrics, hypo_events  # noqa: E402
 from dosetwin.truth.cohort import StandardCalculator, World  # noqa: E402
@@ -28,6 +29,9 @@ DAY = 6  # representative day replayed in the dashboard (day 7 of the run-in)
 
 
 def main():
+    study = json.loads((ROOT / "results" / "study.json").read_text())
+    I.EGFR_COEF = study["frozen_on_dev"]["egfr_coef"]
+    bed_thr = study["frozen_on_dev"]["bedtime_threshold_mgdl"]
     names = list(load_params()["Name"])
     w = World(names, days=14, seed=SEED)
     log = w.run(lambda d: StandardCalculator(w.ehr()))
@@ -49,11 +53,22 @@ def main():
         bins = cg5.reshape(7, 288).T.reshape(48, 6 * 7)
         agp = {q: np.round(np.nanpercentile(bins, q, axis=1), 0).tolist() for q in (10, 25, 50, 75, 90)}
         s = I.implied_settings(thetas[n], p)
+        # wearables over the run-in week
+        nights = w.scenarios[i].nights[:7]
+        hrs = [nn[4] for nn in nights]
+        other_ex = int(sum(((log["act"][i, d * D:(d + 1) * D] > log["steps"][i, d * D:(d + 1) * D] + 20).sum() > 15)
+                           for d in range(7)))
+        # bedtime check at the end of the run-in week (night 7)
+        tb = 6 * D + BT.BED
+        nom, pes = BT.twin_night(tr, i, tb, log)
+        hist = int(ehr.iloc[i]["severe_hypo_history"])
+        flag = bool(pes.min() < bed_thr + 7.0 * hist)
+        snack = BT.snack_size(tr, i, tb, log) if flag else 0.0
         t0 = DAY * D
         z0 = tr.state(i, t0, log)
         rescue = {}
         for ev in log["events"][i]:
-            if ev[1] in ("hypo_rescue", "preemptive_carbs") and t0 <= ev[0] < t0 + D:
+            if ev[1] in ("hypo_rescue", "preemptive_carbs", "bedtime_snack") and t0 <= ev[0] < t0 + D:
                 rescue[ev[0]] = rescue.get(ev[0], 0.0) + ev[3]
         meals = [{"m": int(t - t0), "carbs": float(log["carbs_logged"][i, t] - rescue.get(t, 0.0))}
                  for t in range(t0, t0 + D) if log["carbs_logged"][i, t] - rescue.get(t, 0.0) > 0]
@@ -65,11 +80,20 @@ def main():
                      "tar": round(m["tar_gt180"], 1), "mean": round(m["mean"]), "cv": round(m["cv"], 1),
                      "gmi": round(m["gmi"], 1), "night_tbr": round(mn["tbr_lt70"], 2), "low_events": lows},
             "agp": agp,
+            "wearables": {"sleep_mean_h": round(float(np.mean(hrs)), 1), "short_nights": int(sum(h < 6 for h in hrs)),
+                          "sleep_debt_tonight_h": round(float(log["sleep_debt"][i, tb]), 1),
+                          "resting_hr": int(np.percentile(log["hr"][i, :7 * D], 10)),
+                          "hr_only_exercise_days": other_ex},
+            "tonight": {"cgm_bed": None if np.isnan(log["cgm"][i, tb]) else round(float(log["cgm"][i, tb])),
+                        "min_nominal": round(float(nom.min())), "min_pessimistic": round(float(pes.min())),
+                        "threshold": round(bed_thr + 7.0 * hist, 1), "flag": flag, "snack_g": snack,
+                        "nominal": np.round(nom[::5]).tolist(), "pessimistic": np.round(pes[::5]).tolist()},
             "twin": {"theta": [float(v) for v in thetas[n]], "basal_u_per_min": p.basal, "W": p.W,
                      "cr": round(s["cr"], 1), "cf": round(s["cf"], 1),
                      "basal_u_per_day": round(s["basal_u_per_day"], 1)},
             "day": {"index": DAY + 1, "z0": [float(v) for v in z0], "meals": meals, "boluses": boluses,
-                    "steps": np.add.reduceat(log["steps"][i, t0:t0 + D], np.arange(0, D, 5)).round().tolist(),
+                    "sleep_debt": round(float(log["sleep_debt"][i, t0 + 12 * 60]), 2),
+                    "steps": np.add.reduceat(log["act"][i, t0:t0 + D], np.arange(0, D, 5)).round().tolist(),
                     "cgm": [None if np.isnan(v) else round(float(v)) for v in log["cgm"][i, t0:t0 + D:5]]},
         })
         print(n, out[-1]["week"]["tir"], out[-1]["week"]["tbr"], "twin", s["cr"], s["cf"], round(s["basal_u_per_day"], 1),

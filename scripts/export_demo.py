@@ -41,6 +41,7 @@ def r(x, n=1):
 
 
 def main():
+    I.EGFR_COEF = json.loads((ROOT / "results" / "study.json").read_text())["frozen_on_dev"]["egfr_coef"]
     names = list(load_params()["Name"])
     w = World(names, days=14, seed=SEED)
     ehr = w.ehr()
@@ -54,7 +55,7 @@ def main():
     logB = w.run(lambda d: std, alerter=after7(TrendAlert(30, 50.0)))
     tr = TwinTracker(thetas, ehr, names)
     adv = TwinAdvisor(thetas, ehr, names, tracker=tr)
-    logD = w.run(lambda d: std if d < 7 else adv, alerter=after7(HybridAlert(tr, 65.0)))
+    logD = w.run(lambda d: std if d < 7 else adv, alerter=after7(HybridAlert(tr, 65.0, ehr)))
     truth = true_settings(FEATURED).set_index("patient")
 
     out = {"seed": SEED, "patients": []}
@@ -69,8 +70,8 @@ def main():
         z0 = M.steady_state(th, p.basal, 140.0)
         th0 = th.copy(); th0[M.I_GB] = 140.0; th0[M.I_DAWN] = 0.0
         stp = np.zeros(240); stp[0:45] = 110
-        walk = M.forecast(th0, z0, np.zeros(240), p.basal, np.zeros(240), stp, p.W, 1080, 240)
-        rest = M.forecast(th0, z0, np.zeros(240), p.basal, np.zeros(240), np.zeros(240), p.W, 1080, 240)
+        walk = M.forecast(th0, z0, np.zeros(240), p.basal, np.zeros(240), stp, 0.0, p.W, 1080, 240)
+        rest = M.forecast(th0, z0, np.zeros(240), p.basal, np.zeros(240), np.zeros(240), 0.0, p.W, 1080, 240)
         # meal decisions in evaluation week where arms differ
         best = None
         for (name, t, carbs, dose, sdose) in adv.decisions:
@@ -104,12 +105,14 @@ def main():
                      "walk_drop_mgdl": round(float(rest.min() - walk.min()), 0),
                      "dawn_rise_mgdl_per_h": round(float(th[M.I_DAWN] * 60), 0),
                      "carb_absorption_min": round(float(np.exp(th[M.I_LTM])), 0),
-                     "insulin_absorption_min": round(float(np.exp(th[M.I_LTI])), 0)},
+                     "insulin_absorption_min": round(float(np.exp(th[M.I_LTI])), 0),
+                     "sleep_effect_pct_after_4h_night": round(float((1 - np.exp(-th[M.I_BS] * 3.0)) * 100), 0)},
             "day": {"index": int(day + 1),
                     "cgm_B": r(logB["cgm"][i, sl]), "cgm_D": r(logD["cgm"][i, sl]),
-                    "steps": r(np.add.reduceat(logD["steps"][i, day * D:(day + 1) * D], np.arange(0, D, 5)), 0),
+                    "steps": r(np.add.reduceat(logD["act"][i, day * D:(day + 1) * D], np.arange(0, D, 5)), 0),
                     "events_B": events(logB), "events_D": events(logD)},
             "meal": {"minute_of_day": int(tm - day * D), "minute_abs": int(tm), "carbs_logged": float(carbs),
+                     "sleep_debt": round(float(logD["sleep_debt"][i, tm]), 2),
                      "standard_dose": float(sdose), "twin_dose": float(dose), "z": [float(v) for v in z],
                      "true_after_B": r(logB["bg"][i, meal_h]), "true_after_D": r(logD["bg"][i, meal_h])},
         })
