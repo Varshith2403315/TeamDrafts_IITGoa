@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+scratch_*.py
+data/*.parquet
+data/*.pkl
+*.egg-info/
+node_modules/
+docs/deck/_*
