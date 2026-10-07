@@ -10,8 +10,13 @@ out = (tpl.replace("/*TWINJS*/", (ROOT / "web" / "twin.js").read_text())
 dist = ROOT / "web" / "dist"
 dist.mkdir(exist_ok=True)
 (dist / "index.html").write_text(out)
-# standalone copy with a full document skeleton for opening locally
-(dist / "standalone.html").write_text('<!doctype html><html lang="en"><head><meta charset="utf-8">'
-                                      '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
-                                      '</head><body>' + out + '</body></html>')
-print("wrote", dist / "index.html", len(out) // 1024, "KB")
+# standalone copy with a full document (head = title, fonts, styles; body = app)
+cut = out.index('<header class="appbar">')
+standalone = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+              '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
+              + out[:cut] + '</head><body>' + out[cut:] + '</body></html>')
+(dist / "standalone.html").write_text(standalone)
+# GitHub Pages serves docs/ (main branch); the dashboard is the site's index page
+(ROOT / "docs" / "index.html").write_text(standalone)
+(ROOT / "docs" / ".nojekyll").write_text("")
+print("wrote", dist / "index.html", "and docs/index.html", len(out) // 1024, "KB")
