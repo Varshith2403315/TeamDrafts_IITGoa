@@ -18,16 +18,12 @@
    {
     "code": "E03.9",
     "display": "Hypothyroidism (autoimmune)"
-   },
-   {
-    "code": "E16.0",
-    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 5.9,
+   "hba1c_pct": 6.1,
    "fasting_c_peptide_nmol_l": 0.12,
-   "egfr_ml_min": 70,
+   "egfr_ml_min": 97,
    "tsh_miu_l": 2.5,
    "ldl_mg_dl": 100,
    "urine_acr_mg_g": 12
@@ -81,7 +77,7 @@
   "labs": {
    "hba1c_pct": 8.4,
    "fasting_c_peptide_nmol_l": 0.1,
-   "egfr_ml_min": 101,
+   "egfr_ml_min": 129,
    "tsh_miu_l": 1.9,
    "ldl_mg_dl": 84,
    "urine_acr_mg_g": 16
@@ -126,16 +122,12 @@
    {
     "code": "E03.9",
     "display": "Hypothyroidism (autoimmune)"
-   },
-   {
-    "code": "E16.0",
-    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 5.5,
+   "hba1c_pct": 5.6,
    "fasting_c_peptide_nmol_l": 0.13,
-   "egfr_ml_min": 128,
+   "egfr_ml_min": 129,
    "tsh_miu_l": 3.9,
    "ldl_mg_dl": 104,
    "urine_acr_mg_g": 13
@@ -180,12 +172,16 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 12
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 7.4,
+   "hba1c_pct": 7.7,
    "fasting_c_peptide_nmol_l": 0.07,
-   "egfr_ml_min": 91,
+   "egfr_ml_min": 117,
    "tsh_miu_l": 1.3,
    "ldl_mg_dl": 87,
    "urine_acr_mg_g": 11
@@ -226,12 +222,16 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 12
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 7.8,
+   "hba1c_pct": 8.1,
    "fasting_c_peptide_nmol_l": 0.13,
-   "egfr_ml_min": 98,
+   "egfr_ml_min": 101,
    "tsh_miu_l": 2.1,
    "ldl_mg_dl": 66,
    "urine_acr_mg_g": 13
@@ -275,9 +275,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 6.3,
+   "hba1c_pct": 6.5,
    "fasting_c_peptide_nmol_l": 0.03,
-   "egfr_ml_min": 115,
+   "egfr_ml_min": 127,
    "tsh_miu_l": 1.8,
    "ldl_mg_dl": 78,
    "urine_acr_mg_g": 37
@@ -329,7 +329,7 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 7.1,
+   "hba1c_pct": 7.3,
    "fasting_c_peptide_nmol_l": 0.11,
    "egfr_ml_min": 113,
    "tsh_miu_l": 4.6,
@@ -383,9 +383,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 7.7,
+   "hba1c_pct": 7.9,
    "fasting_c_peptide_nmol_l": 0.13,
-   "egfr_ml_min": 109,
+   "egfr_ml_min": 102,
    "tsh_miu_l": 1.7,
    "ldl_mg_dl": 70,
    "urine_acr_mg_g": 16
@@ -433,9 +433,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 6.1,
+   "hba1c_pct": 6.2,
    "fasting_c_peptide_nmol_l": 0.02,
-   "egfr_ml_min": 100,
+   "egfr_ml_min": 103,
    "tsh_miu_l": 2.2,
    "ldl_mg_dl": 97,
    "urine_acr_mg_g": 5
@@ -479,9 +479,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 7.0,
+   "hba1c_pct": 7.2,
    "fasting_c_peptide_nmol_l": 0.03,
-   "egfr_ml_min": 102,
+   "egfr_ml_min": 90,
    "tsh_miu_l": 2.4,
    "ldl_mg_dl": 87,
    "urine_acr_mg_g": 40
@@ -522,15 +522,19 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 12
+   },
+   {
+    "code": "E10.2",
+    "display": "Type 1 diabetes with kidney complications (diabetic kidney disease)"
    }
   ],
   "labs": {
-   "hba1c_pct": 6.9,
+   "hba1c_pct": 6.5,
    "fasting_c_peptide_nmol_l": 0.04,
-   "egfr_ml_min": 75,
+   "egfr_ml_min": 25,
    "tsh_miu_l": 2.8,
    "ldl_mg_dl": 98,
-   "urine_acr_mg_g": 15
+   "urine_acr_mg_g": 78
   },
   "genetics": {
    "hla_dr_genotype": "DR3/X",
@@ -573,7 +577,7 @@
   "labs": {
    "hba1c_pct": 6.0,
    "fasting_c_peptide_nmol_l": 0.04,
-   "egfr_ml_min": 95,
+   "egfr_ml_min": 96,
    "tsh_miu_l": 2.2,
    "ldl_mg_dl": 140,
    "urine_acr_mg_g": 7
@@ -614,15 +618,23 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 21
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
+   },
+   {
+    "code": "E10.2",
+    "display": "Type 1 diabetes with kidney complications (diabetic kidney disease)"
    }
   ],
   "labs": {
-   "hba1c_pct": 8.0,
+   "hba1c_pct": 7.5,
    "fasting_c_peptide_nmol_l": 0.04,
-   "egfr_ml_min": 107,
+   "egfr_ml_min": 46,
    "tsh_miu_l": 2.5,
    "ldl_mg_dl": 95,
-   "urine_acr_mg_g": 8
+   "urine_acr_mg_g": 40
   },
   "genetics": {
    "hla_dr_genotype": "DR3/DR4",
@@ -664,15 +676,19 @@
    {
     "code": "E03.9",
     "display": "Hypothyroidism (autoimmune)"
+   },
+   {
+    "code": "E10.2",
+    "display": "Type 1 diabetes with kidney complications (diabetic kidney disease)"
    }
   ],
   "labs": {
-   "hba1c_pct": 7.1,
+   "hba1c_pct": 6.5,
    "fasting_c_peptide_nmol_l": 0.11,
-   "egfr_ml_min": 107,
+   "egfr_ml_min": 63,
    "tsh_miu_l": 1.9,
    "ldl_mg_dl": 118,
-   "urine_acr_mg_g": 16
+   "urine_acr_mg_g": 80
   },
   "genetics": {
    "hla_dr_genotype": "DR3/X",
@@ -719,7 +735,7 @@
   "labs": {
    "hba1c_pct": 6.8,
    "fasting_c_peptide_nmol_l": 0.1,
-   "egfr_ml_min": 95,
+   "egfr_ml_min": 100,
    "tsh_miu_l": 2.0,
    "ldl_mg_dl": 109,
    "urine_acr_mg_g": 8
@@ -762,17 +778,17 @@
     "onset_age": 22
    },
    {
-    "code": "E16.0",
-    "display": "History of severe hypoglycaemia (past 12 months)"
+    "code": "E10.2",
+    "display": "Type 1 diabetes with kidney complications (diabetic kidney disease)"
    }
   ],
   "labs": {
-   "hba1c_pct": 7.4,
+   "hba1c_pct": 6.6,
    "fasting_c_peptide_nmol_l": 0.11,
-   "egfr_ml_min": 114,
+   "egfr_ml_min": 47,
    "tsh_miu_l": 2.8,
    "ldl_mg_dl": 118,
-   "urine_acr_mg_g": 25
+   "urine_acr_mg_g": 127
   },
   "genetics": {
    "hla_dr_genotype": "DR3/DR4",
@@ -823,7 +839,7 @@
   "labs": {
    "hba1c_pct": 5.7,
    "fasting_c_peptide_nmol_l": 0.13,
-   "egfr_ml_min": 98,
+   "egfr_ml_min": 74,
    "tsh_miu_l": 4.9,
    "ldl_mg_dl": 118,
    "urine_acr_mg_g": 2
@@ -872,15 +888,19 @@
    {
     "code": "E16.0",
     "display": "History of severe hypoglycaemia (past 12 months)"
+   },
+   {
+    "code": "E10.2",
+    "display": "Type 1 diabetes with kidney complications (diabetic kidney disease)"
    }
   ],
   "labs": {
-   "hba1c_pct": 7.1,
+   "hba1c_pct": 6.6,
    "fasting_c_peptide_nmol_l": 0.11,
-   "egfr_ml_min": 67,
+   "egfr_ml_min": 37,
    "tsh_miu_l": 1.6,
    "ldl_mg_dl": 104,
-   "urine_acr_mg_g": 5
+   "urine_acr_mg_g": 29
   },
   "genetics": {
    "hla_dr_genotype": "DR3/DR4",
@@ -921,9 +941,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 7.6,
+   "hba1c_pct": 7.9,
    "fasting_c_peptide_nmol_l": 0.05,
-   "egfr_ml_min": 89,
+   "egfr_ml_min": 59,
    "tsh_miu_l": 3.9,
    "ldl_mg_dl": 126,
    "urine_acr_mg_g": 9
@@ -964,12 +984,16 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 22
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 6.7,
+   "hba1c_pct": 6.9,
    "fasting_c_peptide_nmol_l": 0.09,
-   "egfr_ml_min": 86,
+   "egfr_ml_min": 101,
    "tsh_miu_l": 1.1,
    "ldl_mg_dl": 104,
    "urine_acr_mg_g": 7
@@ -1017,9 +1041,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 6.4,
+   "hba1c_pct": 6.6,
    "fasting_c_peptide_nmol_l": 0.08,
-   "egfr_ml_min": 106,
+   "egfr_ml_min": 136,
    "tsh_miu_l": 2.4,
    "ldl_mg_dl": 85,
    "urine_acr_mg_g": 19
@@ -1060,16 +1084,12 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 4
-   },
-   {
-    "code": "E16.0",
-    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 5.9,
+   "hba1c_pct": 5.8,
    "fasting_c_peptide_nmol_l": 0.09,
-   "egfr_ml_min": 108,
+   "egfr_ml_min": 115,
    "tsh_miu_l": 1.3,
    "ldl_mg_dl": 80,
    "urine_acr_mg_g": 5
@@ -1117,9 +1137,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 6.7,
+   "hba1c_pct": 6.8,
    "fasting_c_peptide_nmol_l": 0.11,
-   "egfr_ml_min": 97,
+   "egfr_ml_min": 116,
    "tsh_miu_l": 3.8,
    "ldl_mg_dl": 143,
    "urine_acr_mg_g": 19
@@ -1167,9 +1187,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 5.7,
+   "hba1c_pct": 5.9,
    "fasting_c_peptide_nmol_l": 0.03,
-   "egfr_ml_min": 108,
+   "egfr_ml_min": 97,
    "tsh_miu_l": 2.3,
    "ldl_mg_dl": 57,
    "urine_acr_mg_g": 11
@@ -1213,9 +1233,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 6.1,
+   "hba1c_pct": 5.8,
    "fasting_c_peptide_nmol_l": 0.14,
-   "egfr_ml_min": 110,
+   "egfr_ml_min": 120,
    "tsh_miu_l": 2.1,
    "ldl_mg_dl": 64,
    "urine_acr_mg_g": 23
@@ -1265,7 +1285,7 @@
   "labs": {
    "hba1c_pct": 6.2,
    "fasting_c_peptide_nmol_l": 0.11,
-   "egfr_ml_min": 103,
+   "egfr_ml_min": 93,
    "tsh_miu_l": 1.6,
    "ldl_mg_dl": 80,
    "urine_acr_mg_g": 4
@@ -1309,9 +1329,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 5.3,
+   "hba1c_pct": 5.4,
    "fasting_c_peptide_nmol_l": 0.09,
-   "egfr_ml_min": 108,
+   "egfr_ml_min": 126,
    "tsh_miu_l": 2.6,
    "ldl_mg_dl": 80,
    "urine_acr_mg_g": 10
@@ -1355,9 +1375,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 8.3,
+   "hba1c_pct": 8.5,
    "fasting_c_peptide_nmol_l": 0.13,
-   "egfr_ml_min": 106,
+   "egfr_ml_min": 126,
    "tsh_miu_l": 2.1,
    "ldl_mg_dl": 73,
    "urine_acr_mg_g": 8
@@ -1398,12 +1418,16 @@
     "code": "E10",
     "display": "Type 1 diabetes mellitus",
     "onset_age": 4
+   },
+   {
+    "code": "E16.0",
+    "display": "History of severe hypoglycaemia (past 12 months)"
    }
   ],
   "labs": {
-   "hba1c_pct": 5.7,
+   "hba1c_pct": 6.1,
    "fasting_c_peptide_nmol_l": 0.15,
-   "egfr_ml_min": 95,
+   "egfr_ml_min": 109,
    "tsh_miu_l": 2.1,
    "ldl_mg_dl": 88,
    "urine_acr_mg_g": 15
@@ -1451,9 +1475,9 @@
    }
   ],
   "labs": {
-   "hba1c_pct": 7.2,
+   "hba1c_pct": 6.8,
    "fasting_c_peptide_nmol_l": 0.13,
-   "egfr_ml_min": 106,
+   "egfr_ml_min": 69,
    "tsh_miu_l": 3.8,
    "ldl_mg_dl": 90,
    "urine_acr_mg_g": 4
