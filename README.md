@@ -11,7 +11,7 @@
 | **College / incubator** | Indian Institute of Technology (IIT) Goa · KL University, Hyderabad (inter-college team) |
 | **Project title** | DoseTwin: a personal insulin-dosing digital twin for diabetes |
 | **Demo video (≥ 20 min)** | [unlisted YouTube link] |
-| **Live demo (no install)** | https://claude.ai/artifact/2SRP97i3gmo65LiZNX7iwu · offline copy: [`web/dist/standalone.html`](web/dist/standalone.html) (download and open in a browser) |
+| **Live demo (no install)** | https://varshith2403315.github.io/TeamDrafts_IITGoa/ · offline copy: [`web/dist/standalone.html`](web/dist/standalone.html) |
 | **Architecture diagram** | [`docs/DoseTwin_architecture.pdf`](docs/DoseTwin_architecture.pdf) |
 | **Presentation** | [`docs/DoseTwin_presentation.pdf`](docs/DoseTwin_presentation.pdf) |
 | **Licence** | MIT ([`LICENSE`](LICENSE)) |
