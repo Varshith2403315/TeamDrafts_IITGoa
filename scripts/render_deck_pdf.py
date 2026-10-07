@@ -8,8 +8,8 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 DECK = ROOT / "docs" / "deck"
 BLOBS = {"1c3aeea7da0789f0954c8d9d1fd99057": "arms.png", "bc3248e3fa48e9946912be07287a46a1": "alerts.png",
-         "22436f6944cd6ff8ed95b38a6410bd8c": "forecast.png", "040f5dfbab727f5550b5da9bd83adc92": "clinic_view.png",
-         "c164f55f21c1c8a99e783d166da03458": "demo_sim.png"}
+         "22436f6944cd6ff8ed95b38a6410bd8c": "forecast.png", "5539ca7fabf6867935eda1492fbaa888": "clinic_view.png",
+         "f560c77db5211a783d9e0aab19006063": "demo_sim.png"}
 ARROW = ('<svg width="72" height="36" viewBox="0 0 72 36" style="flex:none"><path d="M0,10 H43 V0 L72,18 L43,36 V26 H0 Z" '
          'fill="#8794a1"/></svg>')
 
