@@ -1,0 +1,594 @@
+<title>DoseTwin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an instrument panel. Live dose simulator first, then what the twin learned, one real day, and the evidence. */
+:root {
+  --bg: #f5f7f9; --panel: #ffffff; --ink: #14202b; --muted: #5a6b79; --line: #dbe2e8;
+  --accent: #1f4fd1; --accent-soft: #e6ecfb;
+  --inrange: #2f9e5a; --inrange-band: rgba(47,158,90,.10); --low: #d23a3a; --low-soft: #fbe9e9;
+  --high: #d98a14; --standard: #8794a1;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e151c; --panel: #151f29; --ink: #e6edf3; --muted: #93a4b3; --line: #263442;
+  --accent: #7ea2ff; --accent-soft: #1b2a4a; --inrange: #4cc27b; --inrange-band: rgba(76,194,123,.10);
+  --low: #ff6b6b; --low-soft: #3a1c1f; --high: #f0a73a; --standard: #7d8b98; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e151c; --panel: #151f29; --ink: #e6edf3; --muted: #93a4b3; --line: #263442;
+  --accent: #7ea2ff; --accent-soft: #1b2a4a; --inrange: #4cc27b; --inrange-band: rgba(76,194,123,.10);
+  --low: #ff6b6b; --low-soft: #3a1c1f; --high: #f0a73a; --standard: #7d8b98; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 0 64px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(1.9rem, 4.2vw, 2.9rem); line-height: 1.08; font-weight: 700; }
+h2 { font-size: 1.45rem; font-weight: 700; }
+h3 { font-size: 1.02rem; font-weight: 600; font-family: var(--f-body); }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.num, .mono { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: .74rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 18px; border-bottom: 1px solid var(--line); }
+.mark { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; }
+.mark svg { width: 26px; height: 26px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--panel); }
+.hero { display: grid; gap: 14px; padding-block: 34px 22px; max-width: 760px; }
+.hero p { font-size: 1.06rem; color: var(--muted); max-width: 64ch; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-block: 6px 16px; }
+.tab { font: inherit; font-size: .9rem; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sim { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.sim > * { min-width: 0; }
+.side { padding: 20px; border-right: 1px solid var(--line); display: grid; gap: 16px; align-content: start; }
+.main { padding: 20px; display: grid; gap: 14px; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: .9rem; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; text-align: right; font-family: var(--f-data); }
+.dose { display: grid; gap: 10px; }
+.dosebig { font-family: var(--f-display); font-size: 2.6rem; font-weight: 700; line-height: 1; }
+.dosebig small { font-size: 1rem; font-weight: 500; color: var(--muted); }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.choice { font: inherit; text-align: left; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; display: grid; gap: 2px; }
+.choice b { font-family: var(--f-data); font-size: 1.05rem; }
+.choice span { font-size: .75rem; color: var(--muted); }
+.choice.twin { border-color: var(--accent); background: var(--accent-soft); }
+.readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { padding: 10px 12px; border-radius: 10px; background: var(--bg); display: grid; gap: 2px; }
+.stat .v { font-family: var(--f-data); font-size: 1.3rem; font-weight: 500; }
+.stat .l { font-size: .75rem; color: var(--muted); }
+.stat.bad { background: var(--low-soft); } .stat.bad .v { color: var(--low); }
+.chartbox { width: 100%; overflow-x: auto; }
+svg.chart { width: 100%; height: auto; display: block; }
+svg text { fill: var(--muted); font-family: var(--f-data); font-size: 11px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
+.legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.reveal { font: inherit; font-size: .88rem; padding: 8px 12px; border-radius: 8px; border: 1px dashed var(--line); background: transparent; color: var(--ink); cursor: pointer; justify-self: start; }
+.outcome { display: grid; gap: 8px; padding: 12px 14px; border-radius: 10px; background: var(--bg); font-size: .9rem; }
+section.block { display: grid; gap: 16px; padding-block: 44px 0; }
+.lede { color: var(--muted); max-width: 70ch; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cmp { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center; font-size: .85rem; }
+.bar { height: 8px; border-radius: 4px; background: var(--line); position: relative; }
+.bar > span { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 640px; }
+th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-weight: 600; color: var(--muted); font-size: .78rem; }
+td { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+td:first-child { font-family: var(--f-body); }
+tr.ours td { background: var(--accent-soft); font-weight: 500; }
+.headline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.headline .card .v { font-family: var(--f-display); font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+.headline .card .l { font-size: .82rem; color: var(--muted); }
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; counter-reset: s; }
+.flow .card h3::before { counter-increment: s; content: counter(s) "  "; font-family: var(--f-data); color: var(--accent); }
+.limits { display: grid; gap: 8px; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.limits ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+footer { padding-block: 40px 0; color: var(--muted); font-size: .82rem; }
+
+/* clinician view */
+.clinic { display: grid; grid-template-columns: minmax(0, 290px) minmax(0, 1fr); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.clinic > * { min-width: 0; }
+.plist { border-right: 1px solid var(--line); max-height: 1180px; overflow-y: auto; }
+.plist h3 { padding: 16px 16px 8px; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.prow { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; font: inherit; color: var(--ink); background: transparent; border: 0; border-top: 1px solid var(--line); padding: 10px 16px; cursor: pointer; }
+.prow[aria-current="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.prow .who { font-weight: 600; font-size: .9rem; } .prow .sub { font-size: .76rem; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: .74rem; font-family: var(--f-data); padding: 2px 8px; border-radius: 999px; background: var(--bg); color: var(--muted); white-space: nowrap; }
+.chip.bad { background: var(--low-soft); color: var(--low); } .chip.warn { color: var(--high); } .chip.good { color: var(--inrange); }
+.pdetail { padding: 20px; display: grid; gap: 18px; align-content: start; }
+.phead { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+.phead h3 { font-family: var(--f-display); font-size: 1.35rem; }
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.kpi { background: var(--bg); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
+.kpi .v { font-family: var(--f-data); font-size: 1.1rem; } .kpi .l { font-size: .7rem; color: var(--muted); }
+.kpi .s { font-size: .7rem; } .kpi.bad .v { color: var(--low); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; }
+.ehr { display: grid; gap: 12px; font-size: .86rem; }
+.ehr h4 { margin: 0; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.ehr ul { margin: 4px 0 0; padding-left: 18px; }
+.settings { width: 100%; border-collapse: collapse; font-size: .84rem; min-width: 0; }
+.settings th, .settings td { padding: 6px 6px; border-bottom: 1px solid var(--line); text-align: right; white-space: normal; }
+.settings th:first-child, .settings td:first-child { text-align: left; }
+.trial { display: grid; gap: 10px; }
+.trial label { display: grid; grid-template-columns: 130px 1fr 92px; gap: 10px; align-items: center; font-size: .84rem; }
+.trial output { font-family: var(--f-data); text-align: right; }
+.btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { font: inherit; font-size: .84rem; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.note { font-size: .8rem; color: var(--muted); }
+@media (max-width: 860px) { .clinic { grid-template-columns: 1fr; } .plist { max-height: 260px; border-right: 0; border-bottom: 1px solid var(--line); } .two { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+@media (max-width: 860px) {
+  .sim { grid-template-columns: 1fr; } .side { border-right: 0; border-bottom: 1px solid var(--line); }
+  .grid3, .flow, .headline { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) { .grid3, .flow, .headline, .readout { grid-template-columns: 1fr; } .choices { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .line-anim { transition: d .2s; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="mark">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="9" cy="13" r="7.5" fill="none" stroke="var(--accent)" stroke-width="2.4"/><circle cx="17" cy="13" r="7.5" fill="none" stroke="var(--inrange)" stroke-width="2.4"/></svg>
+      DoseTwin
+    </div>
+    <span class="pill">In-silico study · research prototype · not a medical device</span>
+  </header>
+
+  <div class="hero">
+    <span class="eyebrow">Digital twin for insulin-treated diabetes · validated on type 1</span>
+    <h1>Test the dose on your twin before you inject it.</h1>
+    <p>DoseTwin learns a personal glucose–insulin model from 7 days of CGM, pen and step-counter data. At every meal it simulates the next five hours for each possible dose, picks the safest one that keeps glucose in range, and warns of lows before they start.</p>
+  </div>
+
+
+  <section class="block" id="clinic" style="padding-block:8px 0">
+    <div><span class="eyebrow">Clinician view</span><h2>Review a patient with their twin</h2></div>
+    <p class="lede">What a diabetes clinic sees before a review: patients sorted by hypoglycaemia risk, the synthetic health record, last week's glucose profile, and the settings the twin suggests. Change any setting and the virtual patient replays a real day from last week under it.</p>
+    <div class="clinic">
+      <nav class="plist" id="plist" aria-label="Patients"><h3>30 patients · sorted by low-glucose risk</h3></nav>
+      <div class="pdetail" id="pdetail"></div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-block:36px 0">
+    <div><span class="eyebrow">Patient view at mealtime</span><h2>Test a dose before injecting it</h2></div>
+  </section>
+  <div class="tabs" role="tablist" id="tabs"></div>
+
+  <div class="sim" id="sim">
+    <aside class="side">
+      <div>
+        <span class="eyebrow" id="mealWhen"></span>
+        <h3 id="mealTitle" style="margin-top:4px"></h3>
+      </div>
+      <dl class="kv" id="mealFacts"></dl>
+      <div class="dose">
+        <label for="dose" class="eyebrow">Dose to test</label>
+        <div class="dosebig"><span id="doseVal" class="num"></span> <small>units</small></div>
+        <input type="range" id="dose" min="0" max="20" step="0.5">
+        <div class="choices">
+          <button class="choice" id="pickStd"><span>Bolus calculator</span><b id="stdDose"></b></button>
+          <button class="choice twin" id="pickTwin"><span>Twin recommends</span><b id="twinDose"></b></button>
+        </div>
+      </div>
+    </aside>
+    <div class="main">
+      <div class="readout">
+        <div class="stat" id="stMin"><span class="v"></span><span class="l">Predicted lowest glucose (5 h)</span></div>
+        <div class="stat" id="stTir"><span class="v"></span><span class="l">Predicted time 70–180 mg/dL</span></div>
+        <div class="stat" id="stPeak"><span class="v"></span><span class="l">Predicted peak</span></div>
+      </div>
+      <div class="chartbox"><svg class="chart" id="simChart" viewBox="0 0 720 300" role="img" aria-label="Five-hour glucose forecast for the selected dose"></svg></div>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Twin forecast, selected dose</span>
+        <span><i style="background:var(--standard)"></i>Twin forecast, calculator dose</span>
+        <span><i style="background:var(--low);opacity:.5"></i>Safety floor (forecast minus margin)</span>
+        <span id="lgTruth" hidden><i style="background:var(--ink)"></i>Really happened, twin dose <i style="background:var(--ink);opacity:.45;margin-left:10px"></i>Really happened, calculator dose</span>
+      </div>
+      <button class="reveal" id="reveal">Show what really happened with each dose</button>
+      <div class="outcome" id="outcome" hidden></div>
+    </div>
+  </div>
+
+  <section class="block">
+    <div><span class="eyebrow">After 7 days of data</span><h2>What this patient's twin learned</h2></div>
+    <p class="lede">The clinic record gives a starting point. The twin corrects it from the patient's own sensor and pen data. The "true" values come from the hidden virtual patient and are shown here only because this is a simulation.</p>
+    <div class="grid3" id="learned"></div>
+  </section>
+
+  <section class="block">
+    <div><span class="eyebrow">One evaluation day, same meals, same sensor</span><h2>Standard care vs DoseTwin</h2></div>
+    <p class="lede">Both lines are the same virtual patient living the same day: identical meals, carb-counting mistakes, walks and sensor noise. Only the dosing advice and the low-glucose alerts differ.</p>
+    <div class="chartbox"><svg class="chart" id="dayChart" viewBox="0 0 720 260" role="img" aria-label="24-hour CGM under both arms"></svg></div>
+    <div class="legend"><span><i style="background:var(--standard)"></i>Calculator + CGM trend alert</span><span><i style="background:var(--accent)"></i>DoseTwin</span><span><i style="background:var(--high)"></i>Meal</span><span><i style="background:var(--low)"></i>Predicted-low alert (DoseTwin)</span></div>
+    <div class="headline" id="dayStats"></div>
+  </section>
+
+  <section class="block" id="evidence">
+    <div><span class="eyebrow">Evidence</span><h2>90 held-out patient-weeks</h2></div>
+    <p class="lede" id="evLede"></p>
+    <div class="headline" id="evHead"></div>
+    <div class="tablewrap"><table id="armTable"></table></div>
+    <div class="grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))" id="evCharts"></div>
+  </section>
+
+  <section class="block">
+    <div><span class="eyebrow">How it works</span><h2>From devices to a dose</h2></div>
+    <div class="flow">
+      <div class="card"><h3>Collect</h3><p class="muted">CGM every 5 min, smart-pen doses, meal photos or carb log, phone steps, and the clinic record (weight, carb ratio, correction factor, basal).</p></div>
+      <div class="card"><h3>Personalise</h3><p class="muted">An extended Bergman model starts from the clinic record and is fitted to the patient's own 5-hour forecasts (MAP, robust loss). It takes about a second per patient.</p></div>
+      <div class="card"><h3>Synchronise</h3><p class="muted">An observer keeps the twin locked to the CGM so it always knows insulin on board, carbs on board and recent activity.</p></div>
+      <div class="card"><h3>Decide</h3><p class="muted">Every half-unit dose is simulated for 5 h. Doses whose pessimistic path dips below 70 mg/dL are rejected; the lowest-risk safe dose is shown.</p></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="limits">
+      <h3>What this does not show yet</h3>
+      <ul id="limits"></ul>
+    </div>
+  </section>
+
+  <footer>DoseTwin · Happiest Health Digital Twin Challenge 2026 · Ground-truth patients: UVA/Padova model via the open-source simglucose package (MIT). Code, data generation and every number on this page are reproducible from the repository.</footer>
+</div>
+
+<script>/*TWINJS*/</script>
+<script>
+const DEMO = /*DEMO*/;
+const STUDY = /*STUDY*/;
+const CLINIC = /*CLINIC*/;
+</script>
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const NS = "http://www.w3.org/2000/svg";
+  const H = 300;
+  let P = null, dose = 0, showTruth = false;
+  const fmt = (v, d = 0) => (v == null || isNaN(v)) ? "–" : Number(v).toFixed(d);
+  const hhmm = (m) => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+  const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const MARGIN = (k) => Math.min(12 * k / 60, 25);
+
+  function sim(p, d) {
+    const t = p.twin, m = p.meal;
+    return DoseTwinModel.forecast(t.theta, m.z, { b: t.basal_u_per_min, W: t.W, minute0: m.minute_abs, H, bolus: d, carbs: m.carbs_logged });
+  }
+
+  function axes(svg, { x0, x1, y0, y1, w, h, pad, xticks, yticks, xfmt }) {
+    const X = (v) => pad.l + (v - x0) / (x1 - x0) * (w - pad.l - pad.r);
+    const Y = (v) => pad.t + (1 - (v - y0) / (y1 - y0)) * (h - pad.t - pad.b);
+    el("rect", { x: pad.l, y: Y(180), width: w - pad.l - pad.r, height: Y(70) - Y(180), fill: "var(--inrange-band)" }, svg);
+    for (const v of yticks) {
+      el("line", { x1: pad.l, x2: w - pad.r, y1: Y(v), y2: Y(v), stroke: "var(--line)", "stroke-width": v === 70 || v === 180 ? 1.2 : .6, "stroke-dasharray": v === 70 || v === 180 ? "" : "2 4" }, svg);
+      const tx = el("text", { x: pad.l - 6, y: Y(v) + 4, "text-anchor": "end" }, svg); tx.textContent = v;
+    }
+    for (const v of xticks) { const tx = el("text", { x: X(v), y: h - 6, "text-anchor": "middle" }, svg); tx.textContent = xfmt(v); }
+    return { X, Y };
+  }
+  const path = (arr, X, Y, step = 1, off = 0) => { let d = ""; arr.forEach((v, k) => { if (v == null || isNaN(v)) return; d += (d ? "L" : "M") + X(off + k * step).toFixed(1) + "," + Y(Math.max(40, Math.min(400, v))).toFixed(1); }); return d; };
+
+  function drawSim() {
+    const svg = $("#simChart"); svg.innerHTML = "";
+    const w = 720, h = 300, pad = { l: 40, r: 14, t: 12, b: 26 };
+    const m = P.meal, t0 = m.minute_of_day;
+    const ys = sim(P, dose), yStd = sim(P, m.standard_dose);
+    const truthB = m.true_after_B, truthD = m.true_after_D;
+    let hi = Math.max(260, ...ys, ...yStd); if (showTruth) hi = Math.max(hi, ...truthB.filter(Boolean), ...truthD.filter(Boolean));
+    const y1 = Math.min(400, Math.ceil(hi / 50) * 50);
+    const yt = [40, 70, 180]; for (let v = 250; v <= y1; v += 50) yt.push(v);
+    const { X, Y } = axes(svg, { x0: 0, x1: H, y0: 40, y1, w, h, pad, xticks: [0, 60, 120, 180, 240, 300], yticks: yt, xfmt: (v) => hhmm(t0 + v) });
+    const floor = Array.from(ys, (v, k) => v - MARGIN(k));
+    el("path", { d: path(floor, X, Y), fill: "none", stroke: "var(--low)", "stroke-width": 1.2, "stroke-dasharray": "4 4", opacity: .55 }, svg);
+    el("path", { d: path(yStd, X, Y), fill: "none", stroke: "var(--standard)", "stroke-width": 2, "stroke-dasharray": "6 4" }, svg);
+    el("path", { d: path(ys, X, Y), fill: "none", stroke: "var(--accent)", "stroke-width": 2.8 }, svg);
+    if (showTruth) {
+      el("path", { d: path(truthB, X, Y, 5), fill: "none", stroke: "var(--ink)", "stroke-width": 1.4, opacity: .45 }, svg);
+      el("path", { d: path(truthD, X, Y, 5), fill: "none", stroke: "var(--ink)", "stroke-width": 1.8 }, svg);
+    }
+    const kmin = ys.indexOf(Math.min(...ys));
+    el("circle", { cx: X(kmin), cy: Y(ys[kmin]), r: 4, fill: "var(--accent)" }, svg);
+    // readouts
+    const mn = Math.min(...ys), pk = Math.max(...ys);
+    const tir = ys.filter((v) => v >= 70 && v <= 180).length / ys.length * 100;
+    const safe = Math.min(...floor) >= 70;
+    $("#stMin .v").textContent = fmt(mn) + " mg/dL"; $("#stMin").classList.toggle("bad", !safe);
+    $("#stTir .v").textContent = fmt(tir) + "%";
+    $("#stPeak .v").textContent = fmt(pk) + " mg/dL";
+  }
+
+  function setDose(d) { dose = d; $("#dose").value = d; $("#doseVal").textContent = fmt(d, 1); drawSim(); }
+
+  function drawOutcome() {
+    const m = P.meal, b = m.true_after_B.filter((v) => v != null), d = m.true_after_D.filter((v) => v != null);
+    const low = (a) => Math.round(a.filter((v) => v < 70).length * 5);
+    const row = (name, u, a) => `<div><b>${name}, ${fmt(u, 1)} U:</b> lowest ${fmt(Math.min(...a))} mg/dL, peak ${fmt(Math.max(...a))} mg/dL, ${low(a)} min below 70.</div>`;
+    $("#outcome").innerHTML = row("Bolus calculator", m.standard_dose, b) + row("DoseTwin", m.twin_dose, d) +
+      `<div class="muted" style="font-size:.8rem">Real outcome from the hidden virtual patient, which the twin never sees. The meal was chosen by a fixed rule: the evaluation-week meal where the two arms' doses led to the biggest difference in time below 70 mg/dL. Cohort-wide results are below.</div>`;
+  }
+
+  function drawLearned() {
+    const t = P.twin, e = P.ehr;
+    const err = (a, b) => Math.abs(Math.log(a / b));
+    const ratioCard = (title, unit, rx, tw, tr, note) => {
+      const max = Math.max(rx, tw, tr) * 1.15;
+      const bar = (v, c) => `<div class="bar"><span style="width:${v / max * 100}%;background:${c}"></span></div>`;
+      const better = err(tw, tr) < err(rx, tr);
+      return `<div class="card"><span class="eyebrow">${title}</span>
+        <div class="cmp"><span>Clinic</span>${bar(rx, "var(--standard)")}<span></span><span class="num muted">${fmt(rx, 1)} ${unit}</span>
+        <span>Twin</span>${bar(tw, "var(--accent)")}<span></span><span class="num">${fmt(tw, 1)} ${unit}</span>
+        <span>True</span>${bar(tr, "var(--inrange)")}<span></span><span class="num muted">${fmt(tr, 1)} ${unit}</span></div>
+        <p class="muted" style="font-size:.85rem">${better ? note : "The twin did not improve on the clinic value here."}</p></div>`;
+    };
+    $("#learned").innerHTML =
+      ratioCard("Carb ratio", "g/U", e.cr, t.cr, t.true_cr, `Clinic ratio was ${Math.round(Math.abs(e.cr / t.true_cr - 1) * 100)}% off; the twin is within ${Math.round(Math.abs(t.cr / t.true_cr - 1) * 100)}%.`) +
+      ratioCard("Correction factor", "mg/dL per U", e.cf, t.cf, t.true_cf, `Clinic factor was ${Math.round(Math.abs(e.cf / t.true_cf - 1) * 100)}% off; the twin is within ${Math.round(Math.abs(t.cf / t.true_cf - 1) * 100)}%.`) +
+      `<div class="card"><span class="eyebrow">Daily patterns</span>
+        <dl class="kv"><dt>Dawn rise</dt><dd>+${fmt(t.dawn_rise_mgdl_per_h)} mg/dL/h</dd>
+        <dt>45-min walk lowers glucose by</dt><dd>${fmt(t.walk_drop_mgdl)} mg/dL</dd>
+        <dt>Carb absorption time</dt><dd>${fmt(t.carb_absorption_min)} min</dd>
+        <dt>Insulin absorption time</dt><dd>${fmt(t.insulin_absorption_min)} min</dd></dl>
+        <p class="muted" style="font-size:.85rem">Learned from CGM, pen log and phone steps only.</p></div>`;
+  }
+
+  function drawDay() {
+    const svg = $("#dayChart"); svg.innerHTML = "";
+    const w = 720, h = 260, pad = { l: 40, r: 14, t: 18, b: 26 };
+    const d = P.day, all = d.cgm_B.concat(d.cgm_D).filter((v) => v != null);
+    const y1 = Math.min(400, Math.max(250, Math.ceil(Math.max(...all) / 50) * 50));
+    const yt = [40, 70, 180]; for (let v = 250; v <= y1; v += 50) yt.push(v);
+    const { X, Y } = axes(svg, { x0: 0, x1: 1440, y0: 40, y1, w, h, pad, xticks: [0, 240, 480, 720, 960, 1200, 1435], yticks: yt, xfmt: (v) => hhmm(Math.min(v, 1439)).replace("23:55", "24:00") });
+    el("path", { d: path(d.cgm_B, X, Y, 5), fill: "none", stroke: "var(--standard)", "stroke-width": 1.8 }, svg);
+    el("path", { d: path(d.cgm_D, X, Y, 5), fill: "none", stroke: "var(--accent)", "stroke-width": 2.2 }, svg);
+    for (const e of d.events_D) {
+      if (e.type === "meal_bolus" || e.type === "late_bolus" || e.type === "missed_bolus") el("circle", { cx: X(e.m), cy: pad.t - 8, r: 4, fill: "var(--high)" }, svg);
+      if (e.type === "predicted_low_alert") el("path", { d: `M${X(e.m)},${h - pad.b - 2}l-5,-9h10z`, fill: "var(--low)" }, svg);
+    }
+    const stats = (arr) => { const a = arr.filter((v) => v != null); return { tir: a.filter((v) => v >= 70 && v <= 180).length / a.length * 100, low: a.filter((v) => v < 70).length * 5 }; };
+    const sB = stats(d.cgm_B), sD = stats(d.cgm_D);
+    const alerts = d.events_D.filter((e) => e.type === "predicted_low_alert").length;
+    $("#dayStats").innerHTML = [
+      [fmt(sB.tir) + "%", "Time in range, calculator + trend alert (day " + d.index + ")"],
+      [fmt(sD.tir) + "%", "Time in range, DoseTwin"],
+      [sB.low + " → " + sD.low + " min", "CGM time below 70 mg/dL"],
+      [alerts, "DoseTwin predicted-low alerts that day"],
+    ].map(([v, l]) => `<div class="card"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
+  }
+
+  function selectPatient(k) {
+    P = DEMO.patients[k];
+    document.querySelectorAll(".tab").forEach((b, i) => b.setAttribute("aria-selected", i === k));
+    const m = P.meal, z = m.z;
+    const mealName = m.minute_of_day < 660 ? "Breakfast" : m.minute_of_day < 960 ? "Lunch" : m.minute_of_day < 1140 ? "Evening snack" : "Dinner";
+    $("#mealWhen").textContent = `Day ${P.day.index} · ${hhmm(m.minute_of_day)}`;
+    $("#mealTitle").textContent = `${mealName}, ${P.label.toLowerCase()} aged ${P.ehr.age}`;
+    const iob = z[0] + z[1] - 2 * P.twin.basal_u_per_min * Math.exp(P.twin.theta[4]);
+    $("#mealFacts").innerHTML = `<dt>CGM now</dt><dd>${fmt(z[8])} mg/dL</dd><dt>Carbs logged</dt><dd>${fmt(m.carbs_logged)} g</dd>
+      <dt>Bolus insulin still working</dt><dd>${fmt(Math.max(0, iob), 1)} U</dd><dt>Weight</dt><dd>${fmt(P.ehr.weight_kg)} kg</dd>
+      <dt>Clinic carb ratio</dt><dd>1 U : ${fmt(P.ehr.cr, 1)} g</dd>`;
+    $("#stdDose").textContent = fmt(m.standard_dose, 1) + " U"; $("#twinDose").textContent = fmt(m.twin_dose, 1) + " U";
+    $("#dose").max = Math.max(10, Math.ceil(Math.max(m.standard_dose, m.twin_dose) * 2));
+    showTruth = false; $("#outcome").hidden = true; $("#lgTruth").hidden = true; $("#reveal").textContent = "Show what really happened with each dose";
+    setDose(m.twin_dose); drawLearned(); drawDay();
+  }
+
+  function drawEvidence() {
+    const arms = Object.fromEntries(STUDY.glycemic_by_arm.map((a) => [a.arm, a]));
+    const comp = (b, a, mtr) => STUDY.paired_comparisons.find((c) => c.comparison === `${b} vs ${a}` && c.metric === mtr);
+    const A = arms["A_standard"], B = arms["B_standard+trend_alert"], Dd = arms["D_dosetwin"], E = arms["E_dosetwin_population_prior"];
+    const cA = comp("D_dosetwin", "A_standard", "tir_70_180");
+    const cB = comp("D_dosetwin", "B_standard+trend_alert", "tir_70_180");
+    const cBl = comp("D_dosetwin", "B_standard+trend_alert", "tbr_lt70");
+    const pfmt = (p) => p < 0.001 ? "p < 0.001" : "p = " + p.toFixed(2);
+    const pct = (a, b) => Math.round((1 - b / a) * 100);
+    const sign = (v, d = 1) => (v > 0 ? "+" : "") + v.toFixed(d);
+    $("#evLede").textContent = `30 virtual patients (10 children, 10 teens, 10 adults) in 3 fresh cohorts never used for tuning. Every arm replays the same 7 evaluation days with identical meals, carb-counting errors, walks and sensor noise. Differences are paired per patient, with 95% bootstrap intervals and Wilcoxon tests. "Threshold-alarm CGM" means alarms only after glucose is already low, as on the affordable sensors most people in India use; "predictive-alert CGM" adds a 30-minute trend warning, as on premium sensors.`;
+    $("#evHead").innerHTML = [
+      [`−${pct(A.tbr_lt70, Dd.tbr_lt70)}%`, `Time below 70 mg/dL vs a threshold-alarm CGM with a bolus calculator (${fmt(A.tbr_lt70, 2)}% → ${fmt(Dd.tbr_lt70, 2)}%)`],
+      [`−${pct(A.night_tbr_lt70, Dd.night_tbr_lt70)}%`, `Night-time (00:00–07:00) below 70 vs the same comparator (${fmt(A.night_tbr_lt70, 1)}% → ${fmt(Dd.night_tbr_lt70, 1)}%)`],
+      [`${sign(cA.diff)} pts`, `Time in range vs the same comparator (95% CI ${sign(cA.ci_low)} to ${sign(cA.ci_high)}; ${pfmt(cA.wilcoxon_p)})`],
+      [`${sign(cB.diff)} pts`, `Time in range vs a predictive-alert CGM (95% CI ${sign(cB.ci_low)} to ${sign(cB.ci_high)}; ${pfmt(cB.wilcoxon_p)}). Time below 70 no different (${sign(cBl.diff, 2)} pts).`],
+    ].map(([v, l]) => `<div class="card"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
+    const rows = [["A_standard", "Threshold-alarm CGM + bolus calculator"], ["B_standard+trend_alert", "Predictive-alert CGM + bolus calculator"], ["C_twin_dose+trend_alert", "Predictive-alert CGM + twin dosing"], ["E_dosetwin_population_prior", "DoseTwin, unpersonalised twin"], ["D_dosetwin", "DoseTwin (personal twin dosing + twin alerts)"]];
+    $("#armTable").innerHTML = `<thead><tr><th>Arm</th><th>TIR 70–180 %</th><th>&lt;70 %</th><th>&lt;54 %</th><th>&gt;250 %</th><th>Night &lt;70 %</th><th>Alerts/day</th><th>Rescue carbs g/day</th></tr></thead><tbody>` +
+      rows.map(([k, n]) => { const a = arms[k]; return `<tr class="${k === "D_dosetwin" ? "ours" : ""}"><td>${n}</td><td>${fmt(a.tir_70_180, 1)}</td><td>${fmt(a.tbr_lt70, 2)}</td><td>${fmt(a.tbr_lt54, 2)}</td><td>${fmt(a.tar_gt250, 2)}</td><td>${fmt(a.night_tbr_lt70, 2)}</td><td>${fmt(a.alerts_per_day, 1)}</td><td>${fmt(a.rescue_carbs_per_day, 0)}</td></tr>`; }).join("") + `</tbody>`;
+    // forecast chart + alert chart
+    const fc = STUDY.forecast_rmse.filter((r) => r.horizon === 60);
+    const fnames = { persistence: "CGM stays flat", cgm_trend: "CGM trend line", lightgbm: "LightGBM (trained on 30 patients)", population_twin: "Population twin", personal_twin: "Personal twin" };
+    const fmax = Math.max(...fc.map((r) => r.rmse));
+    const fbars = ["persistence", "cgm_trend", "lightgbm", "population_twin", "personal_twin"].map((k) => { const r = fc.find((x) => x.method === k); return r ? `<span>${fnames[k]}</span><div class="bar"><span style="width:${r.rmse / fmax * 100}%;background:${k === "personal_twin" ? "var(--accent)" : "var(--standard)"}"></span></div><span></span><span class="num ${k === "personal_twin" ? "" : "muted"}">${fmt(r.rmse, 1)} mg/dL</span>` : ""; }).join("");
+    const al = STUDY.alerts_at_matched_false_alarm.filter((r) => r.budget_false_per_day === 2);
+    const anames = { cgm_trend_30: "CGM trend line (30 min)", lightgbm: "LightGBM classifier", twin_40: "Twin forecast alone", dosetwin_hybrid: "DoseTwin hybrid" };
+    const abars = ["cgm_trend_30", "lightgbm", "twin_40", "dosetwin_hybrid"].map((k) => { const r = al.find((x) => x.method === k); return r ? `<span>${anames[k]}</span><div class="bar"><span style="width:${r.sensitivity * 100}%;background:${k === "dosetwin_hybrid" ? "var(--accent)" : "var(--standard)"}"></span></div><span></span><span class="num ${k === "dosetwin_hybrid" ? "" : "muted"}">${fmt(r.sensitivity * 100)}% caught · ${fmt(r.median_lead_min)} min warning</span>` : ""; }).join("");
+    $("#evCharts").innerHTML = `<div class="card"><span class="eyebrow">Forecast error at 60 min (RMSE vs true glucose)</span><div class="cmp">${fbars}</div></div>
+      <div class="card"><span class="eyebrow">Lows caught at ≤ 2 false alerts per day</span><div class="cmp">${abars}</div></div>`;
+    const s = STUDY.settings_recovery;
+    $("#limits").innerHTML = [
+      `All patients are virtual. The hidden physiology is the published UVA/Padova model, and behaviour (meals, carb-counting errors, walks) is simulated. Real-patient validation is the next step.`,
+      `The virtual cohort is easier to control than real life: under standard care its time in range is about 76%, higher than typically reported for people on insulin pens.`,
+      `Against a predictive-alert CGM, the dosing gain is small and not statistically significant (+${cB.diff.toFixed(1)} points). In this cohort even perfect bolus adherence would add only about 2 points, so meal-time dosing has little room left. Most of DoseTwin's measured benefit comes from earlier low warnings.`,
+      `Adding the HbA1c lab to the record made even the unpersonalised twin fairly safe. Personalising it on the patient's own data mainly cuts alarm burden: ${fmt(Dd.alerts_per_day, 1)} vs ${fmt(E.alerts_per_day, 1)} alerts per day and ${fmt(Dd.rescue_carbs_per_day, 0)} vs ${fmt(E.rescue_carbs_per_day, 0)} g of rescue carbs per day. The unpersonalised twin reached higher time in range (${fmt(E.tir_70_180, 1)}% vs ${fmt(Dd.tir_70_180, 1)}%) by dosing more and relying on those extra alerts and carbs.`,
+      `Twin-suggested settings can be badly wrong for some patients (for example a basal of 0 U). The clinician view therefore caps each change at 20% per review and flags low confidence when the twin and the record disagree more than twofold.`,
+      `The twin's carb ratio was closer to the truth than the clinic's in ${fmt(s.cr_twin_closer_fraction * 100)}% of patient-weeks (median error ${fmt(s.cr_median_abs_pct_error_twin)}% vs ${fmt(s.cr_median_abs_pct_error_prescribed)}%). For some patients it was clearly worse, so settings changes must stay clinician-reviewed.`,
+      `Long-acting insulin is modelled as a flat infusion, there is no exercise beyond walking, and the twin needs logged meals. Missed or wrong logs reduce accuracy.`,
+      `Featured patients and meals on this page are illustrative; the table and charts above are cohort-wide.`,
+    ].map((t) => `<li>${t}</li>`).join("");
+  }
+
+  // init
+  $("#tabs").innerHTML = DEMO.patients.map((p, i) => `<button class="tab" role="tab" id="tab${i}" aria-selected="false">${p.label}, ${p.ehr.age} y</button>`).join("");
+  document.querySelectorAll(".tab").forEach((b, i) => b.addEventListener("click", () => selectPatient(i)));
+  $("#dose").addEventListener("input", (e) => setDose(parseFloat(e.target.value)));
+  $("#pickStd").addEventListener("click", () => setDose(P.meal.standard_dose));
+  $("#pickTwin").addEventListener("click", () => setDose(P.meal.twin_dose));
+  $("#reveal").addEventListener("click", () => {
+    showTruth = !showTruth; $("#outcome").hidden = !showTruth; $("#lgTruth").hidden = !showTruth;
+    $("#reveal").textContent = showTruth ? "Hide what really happened" : "Show what really happened with each dose";
+    if (showTruth) drawOutcome(); drawSim();
+  });
+  drawEvidence();
+  selectPatient(0);
+})();
+</script>
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const fmt = (v, d = 0) => (v == null || isNaN(v)) ? "–" : Number(v).toFixed(d);
+  const hh = (m) => String(Math.floor(m / 60) % 24).padStart(2, "0") + ":00";
+  const STEP = 0.2; // guardrail: change at most 20% per review
+  const label = (id) => ({ child: "Child", adolescent: "Teen", adult: "Adult" })[id.split("#")[0]];
+  const risk = (p) => p.week.tbr * 2 + p.week.night_tbr + (100 - p.week.tir) / 10;
+  const pts = CLINIC.patients.slice().sort((a, b) => risk(b) - risk(a));
+  let P = null, trial = null;
+
+  // twin suggestion with guardrails
+  function suggest(cur, twin) {
+    const ratio = twin / cur;
+    const lowConf = !(ratio > 0.5 && ratio < 2) || twin <= 0;
+    const s = lowConf ? cur : cur * Math.min(1 + STEP, Math.max(1 - STEP, ratio));
+    return { value: s, lowConf, ratio };
+  }
+
+  // replay one recorded day on the twin with given settings (calculator-style dosing)
+  function replay(p, CR, CF, basalDay) {
+    const t = p.twin, th = t.theta, z = p.day.z0.slice();
+    const b0 = t.basal_u_per_min, extra = basalDay / 1440 - b0;
+    const meals = new Map(p.day.meals.map((m) => [m.m, m.carbs]));
+    const given = []; const out = []; let lastRescue = -999;
+    for (let k = 0; k < 1440; k++) {
+      let c = meals.get(k) || 0, u = 0;
+      const g = z[8];
+      if (c > 0) { // logged meal (rescue carbs were exported separately and are re-simulated below)
+        const iob = given.reduce((s, [tm, uu]) => s + uu * Math.max(0, 1 - (k - tm) / 240), 0);
+        u = Math.max(0, Math.round((c / CR + Math.max(0, (g - 120) / CF) - iob) * 2) / 2);
+        if (u > 0) given.push([k, u]);
+      }
+      if (g < 70 && k - lastRescue >= 20) { c += 15; lastRescue = k; }
+      if (k % 5 === 0) out.push(g);
+      DoseTwinModel.step(z, th, u + extra, b0, c, (p.day.steps[Math.floor(k / 5)] || 0) / 5, t.W, p.day.index * 1440 - 1440 + k, true);
+    }
+    const a = out.filter((v) => v != null);
+    return { g: out, tir: a.filter((v) => v >= 70 && v <= 180).length / a.length * 100, tbr: a.filter((v) => v < 70).length / a.length * 100, min: Math.min(...a) };
+  }
+
+  function axes(svg, w, h, pad, y1, xt) {
+    const X = (m) => pad.l + m / 1440 * (w - pad.l - pad.r), Y = (v) => pad.t + (1 - (Math.min(y1, Math.max(40, v)) - 40) / (y1 - 40)) * (h - pad.t - pad.b);
+    el("rect", { x: pad.l, y: Y(180), width: w - pad.l - pad.r, height: Y(70) - Y(180), fill: "var(--inrange-band)" }, svg);
+    const yt = [40, 70, 180]; for (let v = 250; v <= y1; v += 50) yt.push(v);
+    for (const v of yt) { el("line", { x1: pad.l, x2: w - pad.r, y1: Y(v), y2: Y(v), stroke: "var(--line)", "stroke-width": (v === 70 || v === 180) ? 1.2 : .6 }, svg); const tx = el("text", { x: pad.l - 6, y: Y(v) + 4, "text-anchor": "end" }, svg); tx.textContent = v; }
+    for (const m of xt) { const tx = el("text", { x: X(m), y: h - 6, "text-anchor": "middle" }, svg); tx.textContent = hh(m); }
+    return { X, Y };
+  }
+  const line = (arr, X, Y, step) => arr.map((v, k) => v == null ? "" : `${k && arr[k - 1] != null ? "L" : "M"}${X(k * step).toFixed(1)},${Y(v).toFixed(1)}`).join("");
+
+  function drawAGP() {
+    const svg = $("#agp"); svg.innerHTML = "";
+    const w = 640, h = 220, pad = { l: 36, r: 10, t: 10, b: 24 }, a = P.agp;
+    const y1 = Math.min(400, Math.max(250, Math.ceil(Math.max(...a[90]) / 50) * 50));
+    const { X, Y } = axes(svg, w, h, pad, y1, [0, 360, 720, 1080, 1410]);
+    const band = (lo, hi, op) => { let d = ""; lo.forEach((v, k) => d += `${k ? "L" : "M"}${X(k * 30 + 15)},${Y(hi[k])}`); for (let k = lo.length - 1; k >= 0; k--) d += `L${X(k * 30 + 15)},${Y(lo[k])}`; el("path", { d: d + "Z", fill: "var(--accent)", opacity: op }, svg); };
+    band(a[10], a[90], .12); band(a[25], a[75], .22);
+    el("path", { d: a[50].map((v, k) => `${k ? "L" : "M"}${X(k * 30 + 15)},${Y(v)}`).join(""), fill: "none", stroke: "var(--accent)", "stroke-width": 2.2 }, svg);
+  }
+
+  function drawReplay() {
+    const svg = $("#replay"); svg.innerHTML = "";
+    const e = P.ehr.prescriptions, cur = replay(P, e.carb_ratio_g_per_u, e.correction_factor_mgdl_per_u, e.basal_u_per_day), tr = replay(P, trial.cr, trial.cf, trial.basal);
+    const w = 640, h = 220, pad = { l: 36, r: 10, t: 10, b: 24 };
+    const y1 = Math.min(400, Math.max(250, Math.ceil(Math.max(...cur.g, ...tr.g) / 50) * 50));
+    const { X, Y } = axes(svg, w, h, pad, y1, [0, 360, 720, 1080, 1410]);
+    for (const m of P.day.meals) el("circle", { cx: X(m.m), cy: pad.t + 4, r: 3.5, fill: "var(--high)" }, svg);
+    el("path", { d: line(cur.g, X, Y, 5), fill: "none", stroke: "var(--standard)", "stroke-width": 1.8, "stroke-dasharray": "5 4" }, svg);
+    el("path", { d: line(tr.g, X, Y, 5), fill: "none", stroke: "var(--accent)", "stroke-width": 2.4 }, svg);
+    const dT = tr.tir - cur.tir, dB = tr.tbr - cur.tbr;
+    $("#replayStats").innerHTML = `Twin prediction for day ${P.day.index}: time in range <b>${fmt(cur.tir)}% → ${fmt(tr.tir)}%</b> (${dT >= 0 ? "+" : ""}${fmt(dT)}), time below 70 <b>${fmt(cur.tbr, 1)}% → ${fmt(tr.tbr, 1)}%</b> (${dB >= 0 ? "+" : ""}${fmt(dB, 1)}), lowest ${fmt(cur.min)} → ${fmt(tr.min)} mg/dL.`;
+  }
+
+  function setTrial(cr, cf, basal) {
+    trial = { cr, cf, basal };
+    $("#trCr").value = cr; $("#trCf").value = cf; $("#trBa").value = basal;
+    $("#oCr").textContent = `1 U : ${fmt(cr, 1)} g`; $("#oCf").textContent = `${fmt(cf, 0)} mg/dL`; $("#oBa").textContent = `${fmt(basal, 1)} U`;
+    drawReplay();
+  }
+
+  function kpi(v, l, bad, target) { return `<div class="kpi ${bad ? "bad" : ""}"><span class="v">${v}</span><span class="l">${l}</span><span class="s ${bad ? "" : "muted"}" style="color:${bad ? "var(--low)" : "var(--muted)"}">${bad ? "Above target" : "On target"} · ${target}</span></div>`; }
+
+  function select(id) {
+    P = CLINIC.patients.find((p) => p.id === id);
+    document.querySelectorAll(".prow").forEach((b) => b.setAttribute("aria-current", b.dataset.id === id));
+    const r = P.ehr, d = r.demographics, L = r.labs, rx = r.prescriptions, wk = P.week, t = P.twin;
+    const dur = d.age - r.conditions[0].onset_age;
+    const flags = r.conditions.filter((c) => c.code === "E16.0");
+    const sCr = suggest(rx.carb_ratio_g_per_u, t.cr), sCf = suggest(rx.correction_factor_mgdl_per_u, t.cf), sBa = suggest(rx.basal_u_per_day, t.basal_u_per_day);
+    const sg = (cur, s, unit, dec) => s.lowConf ? `<td class="muted">${fmt(cur, dec)} ${unit}<br><span class="chip warn">Low confidence: keep</span></td>` : `<td><b>${fmt(s.value, dec)} ${unit}</b>${Math.abs(s.value / cur - 1) < 0.02 ? "" : `<br><span class="chip">${s.value > cur ? "+" : "−"}${fmt(Math.abs(s.value / cur - 1) * 100)}%</span>`}</td>`;
+    $("#pdetail").innerHTML = `
+      <div class="phead"><h3>${label(P.id)}, ${d.age} y, ${d.sex}</h3><span class="muted">${P.id} · ${d.state} · T1D for ${dur} y · BMI ${d.bmi}</span>
+        <span class="chip">HbA1c ${L.hba1c_pct}%</span>${flags.map(() => `<span class="chip bad">Severe hypo in last 12 months</span>`).join("")}</div>
+      <div class="kpis">
+        ${kpi(fmt(wk.tir) + "%", "Time in range 70–180", wk.tir < 70, "&gt;70%")}
+        ${kpi(fmt(wk.tbr, 1) + "%", "Below 70", wk.tbr >= 4, "&lt;4%")}
+        ${kpi(fmt(wk.tbr54, 1) + "%", "Below 54", wk.tbr54 >= 1, "&lt;1%")}
+        ${kpi(fmt(wk.night_tbr, 1) + "%", "Below 70, 00–07 h", wk.night_tbr >= 4, "&lt;4%")}
+        ${kpi(fmt(wk.cv) + "%", "Variability (CV)", wk.cv > 36, "≤36%")}
+        ${kpi(wk.low_events, "Low episodes, 7 days", wk.low_events > 3, "fewer is better")}
+      </div>
+      <div><span class="eyebrow">Glucose profile, last 7 days (median, 25–75% and 10–90% ranges)</span>
+        <div class="chartbox"><svg class="chart" id="agp" viewBox="0 0 640 220" role="img" aria-label="Ambulatory glucose profile"></svg></div></div>
+      <div class="two">
+        <div class="ehr">
+          <div><h4>Diagnoses</h4><ul>${r.conditions.map((c) => `<li>${c.display} <span class="muted mono">${c.code}</span></li>`).join("")}</ul></div>
+          <div><h4>Labs</h4><dl class="kv"><dt>HbA1c</dt><dd>${L.hba1c_pct}%</dd><dt>Fasting C-peptide</dt><dd>${L.fasting_c_peptide_nmol_l} nmol/L</dd><dt>eGFR</dt><dd>${L.egfr_ml_min} mL/min</dd><dt>TSH</dt><dd>${L.tsh_miu_l} mIU/L</dd><dt>LDL</dt><dd>${L.ldl_mg_dl} mg/dL</dd><dt>Urine ACR</dt><dd>${L.urine_acr_mg_g} mg/g</dd></dl></div>
+          <div><h4>Genetics</h4><dl class="kv"><dt>HLA-DR</dt><dd>${r.genetics.hla_dr_genotype}</dd><dt>GAD65 at diagnosis</dt><dd>${r.genetics.gad65_antibody_at_diagnosis}</dd></dl></div>
+          <div><h4>Medications</h4><ul>${r.medications.map((m) => `<li>${m.drug}: ${m.dose}</li>`).join("")}</ul></div>
+          <p class="note">Synthetic record. The twin uses weight, insulin prescriptions and HbA1c; the rest is context for the clinician.</p>
+        </div>
+        <div class="trial">
+          <span class="eyebrow">Settings review</span>
+          <div class="tablewrap" style="border:0"><table class="settings">
+            <tr><th>Setting</th><th>Current</th><th>Twin estimate</th><th>Suggested</th></tr>
+            <tr><td>Carb ratio (g per U)</td><td>${fmt(rx.carb_ratio_g_per_u, 1)}</td><td>${fmt(t.cr, 1)}</td>${sg(rx.carb_ratio_g_per_u, sCr, "", 1)}</tr>
+            <tr><td>Correction (mg/dL per U)</td><td>${fmt(rx.correction_factor_mgdl_per_u)}</td><td>${fmt(t.cf)}</td>${sg(rx.correction_factor_mgdl_per_u, sCf, "", 0)}</tr>
+            <tr><td>Basal (U per day)</td><td>${fmt(rx.basal_u_per_day, 1)}</td><td>${fmt(t.basal_u_per_day, 1)}</td>${sg(rx.basal_u_per_day, sBa, "", 1)}</tr>
+          </table></div>
+          <p class="note">Suggestions move at most 20% per review, in the direction the twin indicates. When the twin and the record differ more than twofold, the twin is flagged as low confidence and the setting is kept.</p>
+          <label for="trCr">Carb ratio <input type="range" id="trCr" min="${(rx.carb_ratio_g_per_u * .6).toFixed(1)}" max="${(rx.carb_ratio_g_per_u * 1.6).toFixed(1)}" step="0.1"><output id="oCr"></output></label>
+          <label for="trCf">Correction <input type="range" id="trCf" min="${Math.round(rx.correction_factor_mgdl_per_u * .6)}" max="${Math.round(rx.correction_factor_mgdl_per_u * 1.6)}" step="1"><output id="oCf"></output></label>
+          <label for="trBa">Basal <input type="range" id="trBa" min="${(rx.basal_u_per_day * .6).toFixed(1)}" max="${(rx.basal_u_per_day * 1.4).toFixed(1)}" step="0.5"><output id="oBa"></output></label>
+          <div class="btnrow"><button class="btn" id="bSug">Try suggestion</button><button class="btn" id="bCur">Reset to current</button><button class="btn primary" id="bOk">Approve changes</button></div>
+          <p class="note" id="okNote" hidden>Approved in this demo only. In practice the change goes to the patient's app for confirmation and the twin keeps watching the next week.</p>
+        </div>
+      </div>
+      <div><span class="eyebrow">Virtual patient replays day ${P.day.index} under the trial settings</span>
+        <div class="chartbox"><svg class="chart" id="replay" viewBox="0 0 640 220" role="img" aria-label="Twin replay of one recorded day"></svg></div>
+        <div class="legend"><span><i style="background:var(--standard)"></i>Current settings</span><span><i style="background:var(--accent)"></i>Trial settings</span><span><i style="background:var(--high)"></i>Logged meal</span></div>
+        <p id="replayStats" style="font-size:.9rem;margin-top:6px"></p>
+        <p class="note">Same meals, carb counts and steps as the recorded day; doses recomputed with the trial settings. This is the twin's prediction, not a measurement.</p></div>`;
+    drawAGP();
+    const upd = () => setTrial(+$("#trCr").value, +$("#trCf").value, +$("#trBa").value);
+    ["#trCr", "#trCf", "#trBa"].forEach((q) => $(q).addEventListener("input", upd));
+    $("#bSug").addEventListener("click", () => setTrial(sCr.value, sCf.value, sBa.value));
+    $("#bCur").addEventListener("click", () => setTrial(rx.carb_ratio_g_per_u, rx.correction_factor_mgdl_per_u, rx.basal_u_per_day));
+    $("#bOk").addEventListener("click", () => { $("#okNote").hidden = false; });
+    setTrial(sCr.value, sCf.value, sBa.value);
+  }
+
+  $("#plist").insertAdjacentHTML("beforeend", pts.map((p) => {
+    const d = p.ehr.demographics, w = p.week;
+    return `<button class="prow" data-id="${p.id}" aria-current="false"><span class="who">${label(p.id)}, ${d.age} y, ${d.sex[0].toUpperCase()}</span><span class="chip ${w.tbr >= 4 ? "bad" : ""}">&lt;70 ${fmt(w.tbr, 1)}%</span><span class="sub">${p.id} · HbA1c ${p.ehr.labs.hba1c_pct}%</span><span class="chip ${w.tir < 70 ? "warn" : "good"}">TIR ${fmt(w.tir)}%</span></button>`;
+  }).join(""));
+  document.querySelectorAll(".prow").forEach((b) => b.addEventListener("click", () => select(b.dataset.id)));
+  select(pts[0].id);
+})();
+</script>
