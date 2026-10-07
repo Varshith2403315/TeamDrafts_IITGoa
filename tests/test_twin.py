@@ -23,14 +23,14 @@ def _synthetic_patient(th, days=3, seed=0):
     for t in range(T):
         if t % 5 == 0:
             cgm[t] = z[8] + rng.normal(0, 4)
-        M.step(z, th, u[t], b, c[t], steps[t], 50.0, t, False)
-    return I.PatientData("synthetic", u, c, steps, cgm, b, 50.0, 12.0, 40.0)
+        M.step(z, th, u[t], b, c[t], steps[t], 0.0, 50.0, t, False)
+    return I.PatientData("synthetic", u, c, steps, np.zeros(T), cgm, b, 50.0, 12.0, 40.0)
 
 
 def test_steady_state_is_steady():
     th = M.default_theta(); th[M.I_DAWN] = 0
     z = M.steady_state(th, 0.01, th[M.I_GB])
-    g = M.forecast(th, z, np.zeros(600), 0.01, np.zeros(600), np.zeros(600), 50.0, 720, 600)
+    g = M.forecast(th, z, np.zeros(600), 0.01, np.zeros(600), np.zeros(600), 0.0, 50.0, 720, 600)
     assert np.max(np.abs(g - th[M.I_GB])) < 1e-6
 
 
@@ -81,3 +81,41 @@ def test_metrics_and_events():
     assert abs(m["tbr_lt70"] - 20 / 220 * 100) < 1e-9
     assert hypo_events(bg) == [100]
     assert hypo_events(np.r_[np.full(10, 60.0), np.full(10, 120.0)]) == []
+
+
+def test_sleep_debt_reduces_insulin_effect():
+    th = M.default_theta(); th[M.I_BS] = 0.06
+    z = M.steady_state(th, 0.01, 180.0)
+    u = np.zeros(300); u[0] = 2.0
+    zeros = np.zeros(300)
+    rested = M.forecast(th, z, u, 0.01, zeros, zeros, 0.0, 50.0, 720, 300)
+    short = M.forecast(th, z, u, 0.01, zeros, zeros, 3.0, 50.0, 720, 300)
+    assert short.min() > rested.min() + 1  # less insulin action after a short night
+
+
+def test_history_of_severe_hypo_raises_dose_floor():
+    names = ["p0", "p1"]
+    ehr = pd.DataFrame({"patient": names, "weight_kg": [50.0] * 2, "carb_ratio_g_per_u": [10.0] * 2,
+                        "correction_factor_mgdl_per_u": [40.0] * 2, "basal_u_per_day": [14.4] * 2,
+                        "severe_hypo_history": [0, 1]})
+    th = M.default_theta(); th[M.I_LSI] = np.log(2.0)
+    adv = TwinAdvisor({"p0": th, "p1": th}, ehr, names)
+    T = 2000
+    log = {"cgm": np.full((2, T), np.nan), "bolus": np.zeros((2, T)), "carbs_logged": np.zeros((2, T)),
+           "steps": np.zeros((2, T))}
+    log["cgm"][:, ::5] = 120.0
+    assert adv.hypo_floor[1] == adv.hypo_floor[0] + 10
+    assert adv.meal_bolus(1, 1500, 60.0, 120.0, 0.0, log) <= adv.meal_bolus(0, 1500, 60.0, 120.0, 0.0, log)
+
+
+def test_low_glucose_at_meal_still_covers_a_large_meal():
+    names = ["p0"]
+    ehr = pd.DataFrame({"patient": names, "weight_kg": [60.0], "carb_ratio_g_per_u": [10.0],
+                        "correction_factor_mgdl_per_u": [40.0], "basal_u_per_day": [14.4]})
+    th = M.default_theta()
+    adv = TwinAdvisor({"p0": th}, ehr, names)
+    T = 2000
+    log = {"cgm": np.full((1, T), np.nan), "bolus": np.zeros((1, T)), "carbs_logged": np.zeros((1, T)),
+           "steps": np.zeros((1, T))}
+    log["cgm"][0, ::5] = 66.0
+    assert adv.meal_bolus(0, 1500, 150.0, 66.0, 0.0, log) > 0
