@@ -154,6 +154,28 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
 .limits ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 footer { padding: 4px 16px 24px; color: var(--muted); font-size: .76rem; }
 
+
+/* how-to-use dialog */
+.helpbtn { margin-left: auto; align-self: center; padding: 5px 12px; border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink); cursor: pointer; font-size: .82rem; font-weight: 500; }
+.helpbtn:hover { background: #f3f6f9; }
+.bar-right { margin-left: 12px; }
+dialog.guide { border: 1px solid var(--line-strong); padding: 0; width: min(680px, calc(100vw - 32px)); max-height: calc(100vh - 48px); color: var(--ink); background: var(--panel); box-shadow: 0 18px 48px rgba(15, 27, 42, .22); }
+dialog.guide[open] { display: flex; flex-direction: column; }
+.guide-body { min-height: 0; flex: 1 1 auto; }
+dialog.guide::backdrop { background: rgba(15, 27, 42, .45); }
+.guide-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--line); background: #f7f9fb; }
+.guide-head h2 { font-size: 1rem; }
+.guide-close { border: 0; background: transparent; font-size: 1.3rem; line-height: 1; cursor: pointer; color: var(--muted); padding: 2px 6px; }
+.guide-body { padding: 16px 18px; display: grid; gap: 14px; overflow-y: auto; }
+.guide-body > p { color: var(--muted); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; border: 1px solid var(--line); counter-reset: g; }
+.steps li { display: grid; grid-template-columns: 34px 1fr; gap: 4px 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); counter-increment: g; }
+.steps li:last-child { border-bottom: 0; }
+.steps li::before { content: counter(g); grid-row: span 2; width: 26px; height: 26px; display: grid; place-items: center; background: var(--accent); color: #fff; font-family: var(--f-data); font-size: .85rem; }
+.steps b { font-weight: 600; }
+.steps span { color: var(--muted); font-size: .86rem; }
+.guide-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 18px; border-top: 1px solid var(--line); background: #f7f9fb; }
+
 @media (max-width: 1100px) {
   .pdetail { grid-template-columns: 1fr; }
   .pdetail > .leftcol, .pdetail > .two { grid-column: 1; }
@@ -188,6 +210,7 @@ footer { padding: 4px 16px 24px; color: var(--muted); font-size: .76rem; }
     <button class="vtab" role="tab" data-view="evidence" aria-selected="false">Evidence</button>
     <button class="vtab" role="tab" data-view="method" aria-selected="false">Method</button>
   </nav>
+  <button class="helpbtn" id="openGuide" type="button">How to use</button>
   <div class="bar-right"><span class="tag">Synthetic data</span><span class="tag">In-silico study · not a medical device</span></div>
 </header>
 
@@ -274,6 +297,20 @@ footer { padding: 4px 16px 24px; color: var(--muted); font-size: .76rem; }
   </section>
 
 </main>
+
+<dialog class="guide" id="guide" aria-labelledby="guideTitle">
+  <div class="guide-head"><h2 id="guideTitle">How to use DoseTwin</h2><button class="guide-close" id="closeGuideX" type="button" aria-label="Close">×</button></div>
+  <div class="guide-body">
+    <p>DoseTwin builds a personal glucose–insulin model (a digital twin) for each patient from their CGM, insulin-pen, meal and step data plus their health record. All patients here are synthetic.</p>
+    <ol class="steps">
+      <li><b>Patients: pick a patient</b><span>The list is sorted by hypoglycaemia risk. Open a patient to see last week's glucose profile, time-in-range metrics and their health record.</span></li>
+      <li><b>Try new settings on the virtual patient</b><span>In Settings review, click "Try suggestion" or move the carb ratio, correction and basal sliders. The twin replays a real day from last week so you can compare current and trial settings.</span></li>
+      <li><b>Dose check: test a meal dose</b><span>Choose a patient tab, drag the dose slider and compare the bolus calculator with the twin's recommendation. Click "Show what really happened" to see the true outcome of each dose.</span></li>
+      <li><b>Evidence and Method</b><span>See the held-out results against standard care and how the twin is built and validated.</span></li>
+    </ol>
+  </div>
+  <div class="guide-foot"><span class="note">Research prototype evaluated in silico. Not a medical device.</span><button class="btn primary" id="closeGuide" type="button">Start with Patients</button></div>
+</dialog>
 <footer>DoseTwin · Team Drafts · Happiest Health Digital Twin Challenge 2026 · Ground-truth patients: UVA/Padova model via the open-source simglucose package (MIT). Every number on this page is reproducible from the repository.</footer>
 
 <script>// DoseTwin forward model - exact port of dosetwin/twin/model.py (step/forecast).
@@ -1221,5 +1258,27 @@ const CLINIC = {"seed": 2026, "patients": [{"id": "adolescent#001", "ehr": {"pat
   let start = (location.hash || "").slice(1);
   if (!start) { try { start = localStorage.getItem("dosetwin-view") || ""; } catch (e) {} }
   show(start || "patients");
+})();
+</script>
+
+<script>
+(() => {
+  const dlg = document.getElementById("guide");
+  const open = () => { if (typeof dlg.showModal === "function") { if (!dlg.open) dlg.showModal(); } else { dlg.setAttribute("open", ""); } };
+  const close = () => {
+    if (dlg.open && typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open");
+    try { localStorage.setItem("dosetwin-guide-seen", "1"); } catch (e) {}
+  };
+  document.getElementById("openGuide").addEventListener("click", open);
+  document.getElementById("closeGuide").addEventListener("click", () => {
+    close();
+    const t = document.querySelector('.vtab[data-view="patients"]'); if (t) t.click();
+  });
+  document.getElementById("closeGuideX").addEventListener("click", close);
+  dlg.addEventListener("cancel", () => { try { localStorage.setItem("dosetwin-guide-seen", "1"); } catch (e) {} });
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) close(); });
+  let seen = false;
+  try { seen = localStorage.getItem("dosetwin-guide-seen") === "1"; } catch (e) {}
+  if (!seen && !/#noguide/.test(location.hash)) open();
 })();
 </script>
