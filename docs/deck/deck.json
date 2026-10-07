@@ -1,1 +1,21 @@
-{"v": 4, "createdOnFiles": {"v": 1, "at": "2026-10-07T08:30:00Z"}, "lists": "css", "title": "DoseTwin Pitch Deck", "order": ["cover", "problem", "gap", "solution", "architecture", "model", "clinic", "demo", "design", "results", "alerts", "forecast", "limits", "impact", "stack", "close"], "sections": {"s1": {"description": "The problem: manual insulin dosing and late low alarms for type 1 diabetes in India", "start": "cover"}, "s2": {"description": "The solution: a personal twin that predicts lows and tests doses", "start": "solution"}, "s3": {"description": "Evidence from a held-out in-silico study, with honest limits", "start": "design"}, "s4": {"description": "Impact, roadmap and how to run it", "start": "impact"}}, "faces": {"bricolage-grotesque": {"family": "Bricolage Grotesque", "href": "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap"}, "ibm-plex-sans": {"family": "IBM Plex Sans", "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"}}, "designSystems": []}
+{
+ "title": "DoseTwin",
+ "order": [
+  "cover",
+  "problem",
+  "gap",
+  "solution",
+  "architecture",
+  "model",
+  "clinic",
+  "demo",
+  "design",
+  "results",
+  "alerts",
+  "forecast",
+  "limits",
+  "impact",
+  "stack",
+  "close"
+ ]
+}
